@@ -1,0 +1,222 @@
+\documentclass{ltxdoc}
+\usepackage{hypdoc}
+\usepackage[
+	loadHyperref=true,
+	createIndexEntries=false
+]{doctools}
+\usepackage{xparse}
+\usepackage{hologo}
+
+\newcommand{\email}[1]{\href{mailto:#1}{\texttt{#1}}}
+\newcommand{\ps}{\ltxclass{problemset}}
+\newcommand{\cosi}[1]{\textsc{cosi}~#1}
+\newcommand{\todo}[1]{\begin{itemize}\item[\textbf{To-do:}] #1 \end{itemize}}
+\newcommand{\note}[1]{\begin{itemize}\item[\textbf{Note:}] #1 \end{itemize}}
+\newcommand{\ctan}[1]{\href{https://ctan.org/pkg/#1}{\package{#1}}}
+\NewExpandableDocumentCommand{\Th}{O{l} m}
+	{\multicolumn{1}{#1}{\textbf{#2}}}
+
+\author{Rebecca Turner\thanks{Brandeis University; \email{rebeccaturner@brandeis.edu}}}
+\title{The \ps\ Document Class}
+\date{2018-10-18}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+
+	Brandeis University's computer science (``\textsc{cosi}'') courses
+	often assign ``problem sets'' which require fairly rigorous
+	formatting. The \ps\ document class, which extends
+	\ltxclass{article}, provides a simple way to typeset these problem
+	sets in \LaTeX.
+
+\end{abstract}
+
+\tableofcontents
+\vfill
+\pagebreak
+
+\section{Class configuration}
+
+\subsection{Class options}
+
+\ps\ defines a limited set of key-value options that may be set at
+\cs{documentclass}-time. These may be removed entirely in a future release,
+as it seems ``messy'' to have three configuration methods
+(\cs{documentclass} options, \cs{problemsetsetup}, and singular option
+commands).
+
+\begin{Optionlist}
+	duedate & Assignment due date in full \\
+	instructor & Instructor name in full \\
+	course & Course name in full \\
+	assignment & Assignment name in full \\
+\end{Optionlist}
+
+Given that \cs{documentclass} option parsing is much more limited than other
+key-value interfaces, these options have limited capabilities.
+
+\subsection{Setting options after loading \ps}
+
+\begin{macro}{\problemsetsetup}\marg{options} sets global \ps\ options; see
+table~\ref{tab:problemset-options} for a list of valid options.
+
+\begin{table}[h]
+	\centering
+	\caption{Options for \cs{problemsetsetup}; many of these are just used
+	in document headers.}
+	\label{tab:problemset-options}
+	\begin{Optionlist}
+	course & Course name in full. \\
+	coursenumber & Course name shorthand; use \texttt{21a} for
+		``\cosi{21a}''. \\
+	assignment & Assignment name in full. \\
+	number & Assignment name shorthand; use \texttt{3} for ``Problem Set
+		3''. \\
+	duedate & Due date, e.g.\ \texttt{2018-10-18}; not parsed at all. \\
+	instructor & Course instructor. \\
+	\end{Optionlist}
+\end{table}
+\end{macro}
+
+\ps\ additionally provides a number of configuration commands with similar
+interfaces as the \TeX\ macros \cs{author}, \cs{title}, and \cs{date}. It is
+likely that these will be deprecated in the future.
+
+\begin{macro}{\duedate}\marg{date} sets the due date in full.\end{macro}
+\begin{macro}{\instructor}\marg{name} sets the instructor name.\end{macro}
+\begin{macro}{\course}\marg{name} sets the course name in full.\end{macro}
+\begin{macro}{\coursenumber}\marg{number} sets the course name by number; e.g.
+	|\coursenumber{21a}| gives a course of ``\cosi{21a}''.\end{macro}
+\begin{macro}{\assignment}\marg{name} sets the assignment name in full.\end{macro}
+\begin{macro}{\problemsetnumber}\marg{number} sets the assignment name by
+	number; e.g. |\problemsetnumber{3}| gives an assignment of ``Problem
+	Set 3''.\end{macro}
+
+\section{User commands and environments}
+
+\ps\ provides a number of commands for typesetting problems.
+
+\begin{macro}{problem}\oarg{options} defines a problem. A problem is set
+1~inch from the left margin (although this amount may be customized by
+modifying the \cs{problemindent} length) and begins a new page.
+
+\begin{Optionlist}
+title & A problem title, to be displayed after ``Problem'' and the problem's
+	number.\\
+number & A problem number; if given, the problem-number counter
+	will not advance. The number must be robust, because it goes inside
+	a \cs{section}. \\
+pagebreak & True/false (default: true). Add a pagebreak before the problem? \\
+\end{Optionlist}
+
+Vertical material is allowed in a~\env{problem}.
+\end{macro}
+
+\begin{macro}{\subproblem}\oarg{description} prints a sub-problem, i.e.\ a
+\cs{subsection}. It doesn't do very much at the moment.
+\end{macro}
+
+\begin{macro}{\Th}\oarg{colspec}\marg{header} prints a table-header in bold.
+By default, the header is left-aligned, but arbitrary alignments can be
+specified with \meta{colspec}. \cs{Th} is backed by \cs{multicolumn}.
+\end{macro}
+
+\begin{macro}{pseudocode}\oarg{keywords} prints
+pseudocode.\footnote{Designed for \cosi{21a} as taught by Dr.\ Antonella
+DiLillo} Several shortcuts are defined, as shown in
+table~\ref{tab:pseudocode}. These shortcuts display in
+\cs{pseudocodesymbolfont} (default: \cs{ttfamily}), which may be redefined
+if you prefer something else. I find the \ctan{MnSymbol} package has symbols
+which look good with Courier, but difficulties loading the actual font made
+me resort to loading it via the \ctan{fontspec} package.
+
+\begin{table}[h]
+	\centering
+	\caption{Shortcuts provided by the \env{pseudocode} environment}
+	\label{tab:pseudocode}
+	\begin{tabular}{>{\ttfamily}lll}
+	\Th{Input} & \Th{Display} & \Th{Codepoint} \\
+	<-         & ←            & U+2190 \\
+	->         & →            & U+2192 \\
+	(/)        & $\emptyset$  & U+2205 \\
+	inf        & $\infty$       & U+221E \\
+	!=         & $\ne$        & U+2260 \\
+	>=         & $\ge$        & U+2265 \\
+	<=         & $\le$        & U+2264 \\
+	\end{tabular}
+\end{table}
+
+\todo{Improve the font selection mechanism; maybe provide a command for each
+	symbol?}
+\note{If your \TeX\ engine doesn't support \textsc{utf}-8 input, the
+	shortcuts might appear totally blank or garbled. Good luck! It will surely
+	work with \hologo{XeTeX} and probably work with \hologo{LuaTeX}.}
+
+\begin{latexcode}
+% the optional [Bar] makes [Bar] bold like the other keywords
+\begin{pseudocode}[Bar]
+Bar(a, n)
+    Input:  two integers, a and n
+    Output: a^n
+    k <- n # k is a counter
+    b <- 1
+    c <- a
+    while k > 0 do
+        if k mod 2 = 0 then
+            k <- k/2
+            c <- c * c
+        else
+            k <- k - 1
+            b <- b * c
+    return b
+\end{pseudocode}
+\end{latexcode}
+\end{macro}
+
+\begin{macro}{assembly}\oarg{extra options} typesets assembly
+code.\footnote{Designed for \cosi{131a} as taught by Dr.\ Liuba Shrira}
+Several considerations are taken into account; most notably, line numbers
+are printed as \texttt{x + n}, where $n$ starts at 0 and counts by 4; the
+line number actually indicates the instruction's location in memory as an
+offset from the program start. Additionally, all valid instructions are
+treated as keywords and styled appropriately.
+
+Any extra options are passed directly to the \ctan{listings} package.
+
+\begin{latexcode}
+\begin{assembly}
+        LOAD  R4, $200       ; sum addr
+        LOAD  R1, =0         ; sum
+        LOAD  R2, =0         ; i
+        LOAD  R3, =0         ; j
+        BR    OUTER          ; we know i < 10
+INNER:  ADD   R1, R3         ; sum += j
+        INC   R3             ; j++
+OUTER:  BLT   R3, R2, INNER  ; while j < i goto inner
+        INC   R2             ; i++
+        LOAD  R3, =0         ; j = 0
+        BLT   R2, =10, OUTER ; while i < 10
+        STORE R1, @R4        ; store sum into sum address
+        HALT
+\end{assembly}
+\end{latexcode}
+\end{macro}
+
+\begin{macro}{java}\oarg{extra options} Tragically-common shorthand
+environment for a listing of Java code.
+
+Any extra options are passed directly to the \ctan{listings} package.
+
+\end{macro}
+
+\section{Future work}
+
+It might be nice to allow passing options to \ps\ to match certain teachers'
+preferred styles, e.g.\ \option{antonella} or \option{liuba}.
+
+Improving font selection; what should the default fonts be? Should
+\hologo{XeTeX} be mandatory?
+
+\end{document}
