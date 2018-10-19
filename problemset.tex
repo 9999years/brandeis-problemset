@@ -1,24 +1,8 @@
 \documentclass{ltxdoc}
-\usepackage{hypdoc}
-\usepackage[
-	loadHyperref=true,
-	createIndexEntries=false
-]{doctools}
-\usepackage{xparse}
-\usepackage{hologo}
-
-\newcommand{\email}[1]{\href{mailto:#1}{\texttt{#1}}}
-\newcommand{\ps}{\ltxclass{problemset}}
-\newcommand{\cosi}[1]{\textsc{cosi}~#1}
-\newcommand{\todo}[1]{\begin{itemize}\item[\textbf{To-do:}] #1 \end{itemize}}
-\newcommand{\note}[1]{\begin{itemize}\item[\textbf{Note:}] #1 \end{itemize}}
-\newcommand{\ctan}[1]{\href{https://ctan.org/pkg/#1}{\package{#1}}}
-\NewExpandableDocumentCommand{\Th}{O{l} m}
-	{\multicolumn{1}{#1}{\textbf{#2}}}
-
+\usepackage{problemset-doc}
 \author{Rebecca Turner\thanks{Brandeis University; \email{rebeccaturner@brandeis.edu}}}
 \title{The \ps\ Document Class}
-\date{2018-10-18}
+\date{2018-10-19}
 
 \begin{document}
 \maketitle
@@ -31,11 +15,59 @@
 	\ltxclass{article}, provides a simple way to typeset these problem
 	sets in \LaTeX.
 
+	Although \ps\ is compatible with all \LaTeX\ flavors, \fontspecok\
+	is recommended for \ctan{fontspec} support.
+
 \end{abstract}
+
+\note{The \ps\ document class should be considered experimental; the only
+stable \textsc{api} is that of the \env{problem} environment.}
+\note{Browse the sources, contribute, or complain at
+	\https{github.com/9999years/problemset}}
 
 \tableofcontents
 \vfill
 \pagebreak
+
+\section{Default behavior}
+
+\ps\ provides packages and well-formatted constructs (notably the
+\env{problem} environment) for problem-set writers. \ps\ will always render
+its body copy as a Times variant (\ctan{stix} for plain \LaTeX\ or
+\ctan{xits} with \fontspecok) and always contains a useful header (which
+contains the page number, author's name, course, instructor, and assignment
+due date).
+
+\subsection{Default packages loaded}
+
+\begin{enumerate}
+\item \ctan{hyperref}, for a nicely-linked table of contents;
+	\cs{href}|{url}{label}|.
+\item \ctan{listings}, for verbatim code listings (including the
+	\env{assembly}, \env{java}, and \env{pseudocode} environments).
+\item \ctan{xcolor}, for gray line numbers in code listings (and perhaps
+	colored listings in the future); e.g.\ \cs{color}|{gray}|.
+\item \ctan{enumitem} for better control over the margins and spacing of
+	the \env{enumerate}, \env{itemize}, and \env{description}
+	environments.
+\item Math packages: \begin{enumerate}
+	\item \ctan{amsmath} for tons of useful math commands, including
+		\cs{text}, \cs{intertext}, and \cs{boxed} as well as the \env{bmatrix},
+		\env{multiline}, \env{gather}, \env{align}, and
+		\env{alignat} environments. See
+		\href{http://texdoc.net/texmf-dist/doc/latex/amsmath/amsldoc.pdf}{``User's
+		Guide for the \package{amsmath} Package''} for a more
+		complete listing.
+	\item \ctan{mathtools} for other useful/utilitarian commands.
+\end{enumerate}
+\item Table packages: \begin{enumerate}
+	\item \ctan{multirow} for cells spanning multiple rows.
+	\item \ctan{booktabs} for good-by-default tables and the \cs{cline}
+		macro.
+	\item \ctan{tabu}, the best table package with dynamically resizable
+		columns, easy creation of new column types, and more.
+\end{enumerate}
+\end{enumerate}
 
 \section{Class configuration}
 
@@ -52,6 +84,8 @@ commands).
 	instructor & Instructor name in full \\
 	course & Course name in full \\
 	assignment & Assignment name in full \\
+	antonella & Use Dr.\ Antonella DiLillio's preferred styles (Courier
+		for code) \\
 \end{Optionlist}
 
 Given that \cs{documentclass} option parsing is much more limited than other
@@ -59,8 +93,9 @@ key-value interfaces, these options have limited capabilities.
 
 \subsection{Setting options after loading \ps}
 
-\begin{macro}{\problemsetsetup}\marg{options} sets global \ps\ options; see
-table~\ref{tab:problemset-options} for a list of valid options.
+\begin{macro}{\problemsetsetup}\marg{options}\AfterLastParam Sets global
+\ps\ options; see table~\ref{tab:problemset-options} for a list of valid
+options.
 
 \begin{table}[h]
 	\centering
@@ -76,13 +111,19 @@ table~\ref{tab:problemset-options} for a list of valid options.
 		3''. \\
 	duedate & Due date, e.g.\ \texttt{2018-10-18}; not parsed at all. \\
 	instructor & Course instructor. \\
+	codefont & With \fontspecok, pass the given font to \cs{setmonofont}
+		and enable Unicode shortcuts for the \env{pseudocode}
+		environment. (If you need to specify options to
+		\cs{setmonofont}, use \cs{setcodefont}.) \\
+	antonella & True/false (default: false; if no value specified,
+		assumes true); use Dr.\ Antonella DiLillio's preferred
+		styles (Courier for code) \\
 	\end{Optionlist}
 \end{table}
 \end{macro}
 
 \ps\ additionally provides a number of configuration commands with similar
-interfaces as the \TeX\ macros \cs{author}, \cs{title}, and \cs{date}. It is
-likely that these will be deprecated in the future.
+interfaces as the \TeX\ macros \cs{author}, \cs{title}, and \cs{date}.
 
 \begin{macro}{\duedate}\marg{date} sets the due date in full.\end{macro}
 \begin{macro}{\instructor}\marg{name} sets the instructor name.\end{macro}
@@ -94,13 +135,54 @@ likely that these will be deprecated in the future.
 	number; e.g. |\problemsetnumber{3}| gives an assignment of ``Problem
 	Set 3''.\end{macro}
 
+\begin{macro}{\setcodefont}\oarg{fontspec options}\marg{font
+name}\AfterLastParam Sets the monospaced font to \meta{font name} and uses
+it for shortcuts in the \env{pseudocode} environment.
+
+\end{macro}
+
+\subsection{Practical usage}
+
+You may find it useful to define a \ext{sty} file for each course. For
+instance, \filename{cosi21a.sty} might read:
+
+\begin{latexfile}{cosi21a.sty}
+% set course/author data
+\problemsetsetup{
+	instructor=Dr.\ Antonella DiLillio,
+	coursenumber=21a,
+}
+\author{Rebecca Turner}
+
+% get a prettier code font -- these can be pretty big so they're not loaded
+% by default
+\setcodefont[
+  Extension = .otf,
+  UprightFont = *-Regular,
+  BoldFont = *-Bold,
+]{FiraMono}
+\end{latexfile}
+
+and then \filename{ps1.tex} might read:
+
+\begin{latexfile}{ps1.tex}
+\documentclass{problemset}
+\usepackage{cosi21a}
+\problemsetnumber{1}
+\duedate{2018-10-29}
+\begin{document}
+% etc.
+\end{document}
+\end{latexfile}
+
 \section{User commands and environments}
 
 \ps\ provides a number of commands for typesetting problems.
 
-\begin{macro}{problem}\oarg{options} defines a problem. A problem is set
-1~inch from the left margin (although this amount may be customized by
-modifying the \cs{problemindent} length) and begins a new page.
+\begin{macro}{problem}\oarg{options}\AfterLastParam Defines a problem. A
+problem is set 1~inch from the left margin (although this amount may be
+customized by modifying the \cs{problemindent} length) and begins a new
+page.
 
 \begin{Optionlist}
 title & A problem title, to be displayed after ``Problem'' and the problem's
@@ -114,23 +196,27 @@ pagebreak & True/false (default: true). Add a pagebreak before the problem? \\
 Vertical material is allowed in a~\env{problem}.
 \end{macro}
 
-\begin{macro}{\subproblem}\oarg{description} prints a sub-problem, i.e.\ a
+\begin{macro}{\subproblem}\oarg{description}\AfterLastParam Prints a sub-problem, i.e.\ a
 \cs{subsection}. It doesn't do very much at the moment.
 \end{macro}
 
-\begin{macro}{\Th}\oarg{colspec}\marg{header} prints a table-header in bold.
+\begin{macro}{\Th}\oarg{colspec}\marg{header}\AfterLastParam Prints a table-header in bold.
 By default, the header is left-aligned, but arbitrary alignments can be
 specified with \meta{colspec}. \cs{Th} is backed by \cs{multicolumn}.
 \end{macro}
 
-\begin{macro}{pseudocode}\oarg{keywords} prints
+\begin{macro}{pseudocode}\oarg{keywords}\AfterLastParam Prints
 pseudocode.\footnote{Designed for \cosi{21a} as taught by Dr.\ Antonella
 DiLillo} Several shortcuts are defined, as shown in
-table~\ref{tab:pseudocode}. These shortcuts display in
+table~\ref{tab:pseudocode}.
+
+These shortcuts display in
 \cs{pseudocodesymbolfont} (default: \cs{ttfamily}), which may be redefined
-if you prefer something else. I find the \ctan{MnSymbol} package has symbols
-which look good with Courier, but difficulties loading the actual font made
-me resort to loading it via the \ctan{fontspec} package.
+if you prefer something else. The easiest way to change
+\cs{pseudocodesymbolfont} is with \cs{setcodefont}. If you use the
+\option{antonella} option with \fontspecok, \ps\ will load \ctan{lm-math}
+and display the symbols seen in table~\ref{tab:pseudocode}, which look
+significantly better with Courier than \textsc{stix}' symbols.
 
 \begin{table}[h]
 	\centering
@@ -141,7 +227,7 @@ me resort to loading it via the \ctan{fontspec} package.
 	<-         & ←            & U+2190 \\
 	->         & →            & U+2192 \\
 	(/)        & $\emptyset$  & U+2205 \\
-	inf        & $\infty$       & U+221E \\
+	inf        & $\infty$     & U+221E \\
 	!=         & $\ne$        & U+2260 \\
 	>=         & $\ge$        & U+2265 \\
 	<=         & $\le$        & U+2264 \\
@@ -152,7 +238,7 @@ me resort to loading it via the \ctan{fontspec} package.
 	symbol?}
 \note{If your \TeX\ engine doesn't support \textsc{utf}-8 input, the
 	shortcuts might appear totally blank or garbled. Good luck! It will surely
-	work with \hologo{XeTeX} and probably work with \hologo{LuaTeX}.}
+	work with \fontspecok.}
 
 \begin{latexcode}
 % the optional [Bar] makes [Bar] bold like the other keywords
@@ -175,7 +261,7 @@ Bar(a, n)
 \end{latexcode}
 \end{macro}
 
-\begin{macro}{assembly}\oarg{extra options} typesets assembly
+\begin{macro}{assembly}\oarg{extra options}\AfterLastParam typesets assembly
 code.\footnote{Designed for \cosi{131a} as taught by Dr.\ Liuba Shrira}
 Several considerations are taken into account; most notably, line numbers
 are printed as \texttt{x + n}, where $n$ starts at 0 and counts by 4; the
@@ -204,19 +290,10 @@ OUTER:  BLT   R3, R2, INNER  ; while j < i goto inner
 \end{latexcode}
 \end{macro}
 
-\begin{macro}{java}\oarg{extra options} Tragically-common shorthand
-environment for a listing of Java code.
+\begin{macro}{java}\oarg{extra options}\AfterLastParam Tragically-common
+shorthand environment for a listing of Java code.
 
 Any extra options are passed directly to the \ctan{listings} package.
-
 \end{macro}
-
-\section{Future work}
-
-It might be nice to allow passing options to \ps\ to match certain teachers'
-preferred styles, e.g.\ \option{antonella} or \option{liuba}.
-
-Improving font selection; what should the default fonts be? Should
-\hologo{XeTeX} be mandatory?
 
 \end{document}

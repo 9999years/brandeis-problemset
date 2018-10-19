@@ -1,0 +1,62 @@
+\documentclass[duedate=2018-99-99, assignment={Problem Set 3},]{problemset}
+\author{Rebecca Turner}
+\problemsetsetup{antonella}
+\coursenumber{131a}
+\setcodefont[
+  Extension = .otf,
+  UprightFont = *-Regular,
+  BoldFont = *-Bold,
+]{FiraMono}
+\begin{document}
+\maketitlepage
+
+\begin{problem}
+	no options
+\end{problem}
+
+\begin{pseudocode}[Foo,PutSorted]
+Foo(a, n)
+	Input:  two integers, a and n
+	Output: a^n
+	k <- 0
+	b <- 1
+	while k <= n do
+		k <- k + 1
+		b <- b * a
+	return b
+
+PutSorted(x, y)
+	pass
+\end{pseudocode}
+
+\begin{problem}[pagebreak=false]
+	no title, no number
+\end{problem}
+
+\[ \sum_{i = 0}^{\infty} \frac{\partial x}{\partial y} \sin x y \]
+
+\begin{problem}[pagebreak=false, title=Example title]
+	title with spaces, no number
+\end{problem}
+
+\begin{problem}[pagebreak=false, number=5.3]
+	number, no title
+\end{problem}
+
+\begin{problem}[pagebreak=false, number=2.3, title=Threads]
+	number and title
+\end{problem}
+
+\begin{problem}[pagebreak=false]
+	no number or title after problem with number
+\end{problem}
+
+\begin{problem}[pagebreak=true]
+	pagebreak explicitly true
+\end{problem}
+
+\begin{problem}
+	no options (should have a pagebreak)
+\end{problem}
+
+\end{document}
