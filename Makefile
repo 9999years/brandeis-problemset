@@ -1,5 +1,5 @@
 dist:
-	latexmk -norc -quiet problemset.tex
+	latexmk -norc -pdf problemset.tex
 	mkdir problemset
 	cp -t problemset problemset.cls problemset.tex problemset-doc.sty \
 		problemset.pdf README.md
@@ -8,3 +8,4 @@ dist:
 clean:
 	rm -r problemset
 	rm problemset.tar.gz
+	latexmk -norc -C

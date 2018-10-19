@@ -12,3 +12,7 @@ problemset.pdf     | Documentation (English)
 problemset.tex     | Documentation source
 problemset-doc.sty | Documentation styles
 README.md          | This file
+
+## License
+
+GNU GPLv3; see `LICENSE.md`

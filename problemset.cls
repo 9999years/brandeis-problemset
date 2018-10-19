@@ -1,4 +1,4 @@
-\ProvidesClass{problemset}[2018-10-19 0.0.1 COSI Problem sets at Brandeis University]
+\ProvidesClass{problemset}[2018-10-19 0.1.0 COSI Problem sets at Brandeis University]
 \errorcontextlines 10
 
 \PassOptionsToClass{12pt}{article}
