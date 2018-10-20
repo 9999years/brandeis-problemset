@@ -1,17 +1,17 @@
-# The `problemset` document class
+# The `brandeis-problemset` document class
 
 Brandeis University's computer science (“cosi”) courses often assign “problem
-sets” which require fairly rigorous formatting. The `problemset` document
+sets” which require fairly rigorous formatting. The `brandeis-problemset` document
 class, which extends `article`, provides a simple way to typeset these problem
 sets in LaTeX.
 
-File               | Description
--------------------|------------------------------
-problemset.cls     | The problemset document class
-problemset.pdf     | Documentation (English)
-problemset.tex     | Documentation source
-problemset-doc.sty | Documentation styles
-README.md          | This file
+File                        | Description
+----------------------------|------------------------------
+brandeis-problemset.cls     | The brandeis-problemset document class
+brandeis-problemset.pdf     | Documentation (English)
+brandeis-problemset.tex     | Documentation source
+brandeis-problemset-doc.sty | Documentation styles
+README.md                   | This file
 
 ## License
 

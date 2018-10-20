@@ -1,7 +1,7 @@
 \documentclass{ltxdoc}
-\usepackage{problemset-doc}
+\usepackage{brandeis-problemset-doc}
 \author{Rebecca Turner\thanks{Brandeis University; \email{rebeccaturner@brandeis.edu}}}
-\title{The \ps\ Document Class}
+\title{The \bps\ Document Class}
 \date{2018-10-19}
 
 \begin{document}
@@ -11,19 +11,19 @@
 
 	Brandeis University's computer science (``\textsc{cosi}'') courses
 	often assign ``problem sets'' which require fairly rigorous
-	formatting. The \ps\ document class, which extends
+	formatting. The \bps\ document class, which extends
 	\ltxclass{article}, provides a simple way to typeset these problem
 	sets in \LaTeX.
 
-	Although \ps\ is compatible with all \LaTeX\ flavors, \fontspecok\
+	Although \bps\ is compatible with all \LaTeX\ flavors, \fontspecok\
 	is recommended for \ctan{fontspec} support.
 
 \end{abstract}
 
-\note{The \ps\ document class should be considered experimental; the only
+\note{The \bps\ document class should be considered experimental; the only
 stable \textsc{api} is that of the \env{problem} environment.}
 \note{Browse the sources, contribute, or complain at
-	\https{github.com/9999years/problemset}}
+	\https{github.com/9999years/brandeis-problemset}}
 
 \tableofcontents
 \vfill
@@ -31,8 +31,8 @@ stable \textsc{api} is that of the \env{problem} environment.}
 
 \section{Default behavior}
 
-\ps\ provides packages and well-formatted constructs (notably the
-\env{problem} environment) for problem-set writers. \ps\ will always render
+\bps\ provides packages and well-formatted constructs (notably the
+\env{problem} environment) for problem-set writers. \bps\ will always render
 its body copy as a Times variant (\ctan{stix} for plain \LaTeX\ or
 \ctan{xits} with \fontspecok) and always contains a useful header (which
 contains the page number, author's name, course, instructor, and assignment
@@ -73,7 +73,7 @@ due date).
 
 \subsection{Class options}
 
-\ps\ defines a limited set of key-value options that may be set at
+\bps\ defines a limited set of key-value options that may be set at
 \cs{documentclass}-time. These may be removed entirely in a future release,
 as it seems ``messy'' to have three configuration methods
 (\cs{documentclass} options, \cs{problemsetsetup}, and singular option
@@ -84,6 +84,7 @@ commands).
 	instructor & Instructor name in full \\
 	course & Course name in full \\
 	assignment & Assignment name in full \\
+	gantt &  Load packages for the \env{ganttschedule} environment \\
 	antonella & Use Dr.\ Antonella DiLillio's preferred styles (Courier
 		for code) \\
 \end{Optionlist}
@@ -91,10 +92,10 @@ commands).
 Given that \cs{documentclass} option parsing is much more limited than other
 key-value interfaces, these options have limited capabilities.
 
-\subsection{Setting options after loading \ps}
+\subsection{Setting options after loading \bps}
 
 \begin{macro}{\problemsetsetup}\marg{options}\AfterLastParam Sets global
-\ps\ options; see table~\ref{tab:problemset-options} for a list of valid
+\bps\ options; see table~\ref{tab:problemset-options} for a list of valid
 options.
 
 \begin{table}[h]
@@ -115,6 +116,7 @@ options.
 		and enable Unicode shortcuts for the \env{pseudocode}
 		environment. (If you need to specify options to
 		\cs{setmonofont}, use \cs{setcodefont}.) \\
+	gantt & Load packages for the \env{ganttschedule} environment \\
 	antonella & True/false (default: false; if no value specified,
 		assumes true); use Dr.\ Antonella DiLillio's preferred
 		styles (Courier for code) \\
@@ -122,7 +124,7 @@ options.
 \end{table}
 \end{macro}
 
-\ps\ additionally provides a number of configuration commands with similar
+\bps\ additionally provides a number of configuration commands with similar
 interfaces as the \TeX\ macros \cs{author}, \cs{title}, and \cs{date}.
 
 \begin{macro}{\duedate}\marg{date} sets the due date in full.\end{macro}
@@ -175,9 +177,11 @@ and then \filename{ps1.tex} might read:
 \end{document}
 \end{latexfile}
 
+See section~\ref{sec:example} for a more complete example.
+
 \section{User commands and environments}
 
-\ps\ provides a number of commands for typesetting problems.
+\bps\ provides a number of commands for typesetting problems.
 
 \begin{macro}{problem}\oarg{options}\AfterLastParam Defines a problem. A
 problem is set 1~inch from the left margin (although this amount may be
@@ -214,7 +218,7 @@ These shortcuts display in
 \cs{pseudocodesymbolfont} (default: \cs{ttfamily}), which may be redefined
 if you prefer something else. The easiest way to change
 \cs{pseudocodesymbolfont} is with \cs{setcodefont}. If you use the
-\option{antonella} option with \fontspecok, \ps\ will load \ctan{lm-math}
+\option{antonella} option with \fontspecok, \bps\ will load \ctan{lm-math}
 and display the symbols seen in table~\ref{tab:pseudocode}, which look
 significantly better with Courier than \textsc{stix}' symbols.
 
@@ -295,5 +299,137 @@ shorthand environment for a listing of Java code.
 
 Any extra options are passed directly to the \ctan{listings} package.
 \end{macro}
+
+\begin{macro}{ganttschedule}\marg{total cell count}\oarg{title}\AfterLastParam
+An environment for drawing Gantt charts indicating process scheduling. The
+mandatory argument indicates how small the grid should be; \texttt{19}
+subdivides the line into 19 cells.
+
+Within a \env{ganttschedule}, use the \cs{burst} command to indicate an
+active process (i.e.\ a process burst).
+
+\begin{macro}{\burst}\marg{pid}\marg{burst length}\AfterLastParam
+Draw a burst for process \marg{pid} of time length \meta{burst length}.
+\end{macro}
+
+\note{These aren't really Gantt charts, but that's what Dr.\ Shrira calls
+	them, so that's what they're called here.}
+\note{Because \env{ganttschedule} relies on \ctan{tikz}, \ctan{fp}, and
+	\ctan{calc}, it can add significantly to document compile times.
+	If you intend to use the \env{ganttschedule}
+	environment, make sure to use the \option{gantt} class option or set
+	\option{gantt} in \cs{problemsetsetup}.}
+
+\begin{latexcode}
+\begin{ganttschedule}{19}
+	\burst{2}{1}
+	\burst{4}{1}
+	\burst{3}{2}
+	\burst{5}{5}
+	\burst{1}{10}
+\end{ganttschedule}
+\end{latexcode}
+\end{macro}
+
+\subsection{General formatting commands}
+
+\begin{macro}{\ac}\marg{acronym}\AfterLastParam
+Typesets an acronym. The \meta{acronym} should be lowercase (e.g.\
+\cs{ac}|{cpu}| rather than \cs{ac}|{CPU}|). Currently, \cs{ac} simply
+delegates to \cs{textsc}. In the future, I'd like to support a bit of
+letterspacing; ``for abbreviations and acronyms in the midst of normal text,
+use spaced small caps.''\footnote{\textit{The Elements of Typographic Style} by
+Robert Bringhurst, 2nd.\ ed, \S\ 3.2.2}
+\end{macro}
+
+\begin{macro}{\Sc}\marg{text}\AfterLastParam
+An abbreviation for \cs{textsc}\end{macro}
+\begin{macro}{\Rm}\marg{text}\AfterLastParam
+An abbreviation for \cs{textrm}\end{macro}
+\begin{macro}{\Up}\marg{text}\AfterLastParam
+An abbreviation for \cs{textup}\end{macro}
+\begin{macro}{\Bf}\marg{text}\AfterLastParam
+An abbreviation for \cs{textbf}\end{macro}
+\begin{macro}{\It}\marg{text}\AfterLastParam
+An abbreviation for \cs{textit}\end{macro}
+\begin{macro}{\Tt}\marg{text}\AfterLastParam
+An abbreviation for \cs{texttt}\end{macro}
+
+\section{Example}\label{sec:example}
+
+A brief example usage of \bps\ follows. For a longer, more in-depth example,
+see
+\href{https://github.com/9999years/brandeis-problemset/blob/master/example.tex}{\filename{example.tex}
+in the \bps\ repository.}
+
+\begin{latexcode}
+\documentclass[gantt]{brandeis-problemset}
+\author{Rebecca Turner}
+\problemsetsetup{
+	coursenumber=21a,
+	instructor=Dr.\ Liuba Shrira,
+	duedate=2018-10-20,
+	number=3,
+}
+\newcommand{\io}{\ac{io}}
+\newcommand{\cpu}{\ac{cpu}}
+\begin{document}
+
+\begin{problem}
+	Write an assembly program!
+\end{problem}
+
+\begin{assembly}
+        LOAD  R1, $200      ; A = (program location) + 200
+        LOAD  R2, =1        ; i = 1
+\end{assembly}
+
+\begin{problem}
+	What does this algorithm do? Analyze its worst-case running time and
+	express it using big-O notation.
+
+\begin{pseudocode}[Foo]
+Foo(a, n)
+	Input:  two integers, a and n
+	Output: a^n
+	k <- 0
+	b <- 1
+	while k < n do
+		k <- k + 1
+		b <- b * a
+	return b
+\end{pseudocode}
+\end{problem}
+
+$\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
+
+\begin{problem}[number=5.4]
+	Consider the following set of processes, with the length of the
+	\cpu\ burst given in milliseconds:
+
+	\begin{center}
+		\begin{tabu} to 0.25\linewidth{X[1,$]rr}
+			\Th{Process} & \Th{Burst time} & \Th{Priority} \\
+			P_1 & 10 & 3 \\
+			P_2 & 1 & 1 \\
+			P_3 & 2 & 3 \\
+			P_4 & 1 & 4 \\
+			P_5 & 5 & 2 \\
+		\end{tabu}
+	\end{center}%$
+
+	Draw a Gantt chart to illustrate the execution of these processes
+	using the \ac{sjf} scheduling algorith.
+\end{problem}
+
+\begin{ganttschedule}{19}
+	\burst{2}{1}
+	\burst{4}{1}
+	\burst{3}{2}
+	\burst{5}{5}
+	\burst{1}{10}
+\end{ganttschedule}
+\end{document}
+\end{latexcode}
 
 \end{document}

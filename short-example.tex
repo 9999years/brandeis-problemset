@@ -1,0 +1,67 @@
+\documentclass[gantt]{brandeis-problemset}
+\author{Rebecca Turner}
+\problemsetsetup{
+	coursenumber=21a,
+	instructor=Dr.\ Liuba Shrira,
+	duedate=2018-10-20,
+	number=3,
+}
+\newcommand{\io}{\ac{io}}
+\newcommand{\cpu}{\ac{cpu}}
+\begin{document}
+
+\begin{problem}
+	Write an assembly program!
+\end{problem}
+
+\begin{assembly}
+        LOAD  R1, $200      ; A = (program location) + 200
+        LOAD  R2, =1        ; i = 1
+\end{assembly}
+
+\begin{problem}
+	What does this algorithm do? Analyze its worst-case running time and
+	express it using big-O notation.
+
+\begin{pseudocode}[Foo]
+Foo(a, n)
+	Input:  two integers, a and n
+	Output: a^n
+	k <- 0
+	b <- 1
+	while k < n do
+		k <- k + 1
+		b <- b * a
+	return b
+\end{pseudocode}
+\end{problem}
+
+$\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
+
+\begin{problem}[number=5.4]
+	Consider the following set of processes, with the length of the
+	\cpu\ burst given in milliseconds:
+
+	\begin{center}
+		\begin{tabu} to 0.25\linewidth{X[1,$]rr}
+			\Th{Process} & \Th{Burst time} & \Th{Priority} \\
+			P_1 & 10 & 3 \\
+			P_2 & 1 & 1 \\
+			P_3 & 2 & 3 \\
+			P_4 & 1 & 4 \\
+			P_5 & 5 & 2 \\
+		\end{tabu}
+	\end{center}%$
+
+	Draw a Gantt chart to illustrate the execution of these processes
+	using the \ac{sjf} scheduling algorith.
+\end{problem}
+
+\begin{ganttschedule}{19}
+	\burst{2}{1}
+	\burst{4}{1}
+	\burst{3}{2}
+	\burst{5}{5}
+	\burst{1}{10}
+\end{ganttschedule}
+\end{document}
