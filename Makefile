@@ -4,19 +4,20 @@ TEXMF_ROOT := "${HOME}/texmf"
 INSTALL_DIR := "$(TEXMF_ROOT)/tex/latex/${PACKAGE}"
 
 ${PACKAGE}.pdf: ${PACKAGE}.tex
-	latexmk -norc -pdf ${PACKAGE}.tex
+	latexmk -norc -pdf $?
 
 example.pdf: example.tex
-	latexmk -norc -pdf example.tex
+	latexmk -norc -pdf $?
 
 ${PACKAGE}: $(DIST_FILES)
 	mkdir ${PACKAGE}
-	cp -t ${PACKAGE} $(DIST_FILES)
+	cp -t ${PACKAGE} $?
 	chmod -x ${PACKAGE}/*
 	chmod -x ${PACKAGE}
 
 ${PACKAGE}.tar.gz: ${PACKAGE}
-	tar -czf ${PACKAGE}.tar.gz ${PACKAGE}
+	tar -czf $@ $?
+	tar -tvf $@
 
 dist: ${PACKAGE}.tar.gz
 
