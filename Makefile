@@ -1,26 +1,34 @@
-DIST_FILES := problemset.cls problemset.tex problemset-doc.sty problemset.pdf README.md
+PACKAGE := brandeis-problemset
+DIST_FILES := ${PACKAGE}.cls ${PACKAGE}.tex ${PACKAGE}-doc.sty ${PACKAGE}.pdf README.md example.tex example.pdf
 TEXMF_ROOT := "${HOME}/texmf"
-INSTALL_DIR := "$(TEXMF_ROOT)/tex/latex/problemset"
+INSTALL_DIR := "$(TEXMF_ROOT)/tex/latex/${PACKAGE}"
 
-problemset.pdf: problemset.tex
-	latexmk -norc -pdf problemset.tex
+${PACKAGE}.pdf: ${PACKAGE}.tex
+	latexmk -norc -pdf ${PACKAGE}.tex
 
-problemset: problemset.pdf
-	mkdir problemset
-	cp -t problemset $(DIST_FILES)
+example.pdf: example.tex
+	latexmk -norc -pdf example.tex
 
-problemset.tar.gz: problemset
-	tar -czf problemset.tar.gz problemset
+${PACKAGE}: $(DIST_FILES)
+	mkdir ${PACKAGE}
+	cp -t ${PACKAGE} $(DIST_FILES)
+	chmod -x ${PACKAGE}/*
+	chmod -x ${PACKAGE}
+
+${PACKAGE}.tar.gz: ${PACKAGE}
+	tar -czf ${PACKAGE}.tar.gz ${PACKAGE}
+
+dist: ${PACKAGE}.tar.gz
 
 tidy:
 	# copied files
-	rm -r problemset
+	rm -r ${PACKAGE}
 	# all generated files but the pdf
 	latexmk -norc -c
 
 clean:
 	make tidy
-	rm problemset.tar.gz
+	rm ${PACKAGE}.tar.gz
 	latexmk -norc -C
 
 install: problemset

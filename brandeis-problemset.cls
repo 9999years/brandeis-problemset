@@ -1,4 +1,11 @@
-\ProvidesClass{problemset}[2018-10-19 0.1.0 COSI Problem sets at Brandeis University]
+\ProvidesClass{brandeis-problemset}[2018-10-20 0.2.0 COSI Problem sets at Brandeis University]
+% Description: A document class for Brandeis University's computer science
+%              courses' problem sets
+% License:     GPL-3.0
+% Homepage:    https://github.com/9999years/brandeis-problemset
+%              https://ctan.org/pkg/brandeis-problemset
+% Maintainer:  Rebecca Turner <rebeccaturner@brandeis.edu>
+
 \errorcontextlines 10
 
 \PassOptionsToClass{12pt}{article}
@@ -57,11 +64,16 @@
 
 % package options
 \RequirePackage{kvoptions}
-\DeclareStringOption{duedate}[\undefined]
-\DeclareStringOption{assignment}[\undefined]
-\DeclareStringOption{instructor}[\undefined]
-\DeclareStringOption{course}[\undefined]
+\SetupKeyvalOptions{
+	family=problemset,
+	prefix=problemset@,
+}
+\DeclareStringOption[\relax]{duedate}
+\DeclareStringOption[\relax]{assignment}
+\DeclareStringOption[\relax]{instructor}
+\DeclareStringOption[\relax]{course}
 \DeclareBoolOption{antonella}
+\DeclareBoolOption{gantt}
 \ProcessKeyvalOptions*
 
 \newif\ifpseudocode@loaded
@@ -130,6 +142,26 @@
 	\fi
 }
 
+% loads the ganttschedule environment dependencies
+\newif\ifgantt@loaded
+\newcommand{\ensure@gantt}
+	{\ifgantt@loaded
+	\else
+		\RequirePackage{tikz}
+		\RequirePackage{fp}
+		\RequirePackage{calc}
+		\newcounter{@gantt@time}
+		\newcounter{gantt@time@after}
+		\newlength{\gantt@unit}
+		\gantt@loadedtrue
+	\fi}
+\newcommand{\@loadgantt}
+	{\ifproblemset@gantt
+		\ensure@gantt
+	\fi}
+% if 'gantt' package option was given
+\@loadgantt
+
 % additional options
 \newcommand{\duedate}[1]         {\renewcommand{\problemset@duedate}{#1}}
 \newcommand{\instructor}[1]      {\renewcommand{\problemset@instructor}{#1}}
@@ -152,6 +184,7 @@
 	\setcodefont{#1}
 }
 \define@boolkey{problemset}[problemset@]{antonella}[true]{}
+\define@boolkey{problemset}[problemset@]{gantt}[true]{\@loadgantt}
 \newcommand{\problemsetsetup}[1] {\setkeys{problemset}{#1}}
 
 % listings
@@ -178,7 +211,7 @@
 \lstnewenvironment{pseudocode}[1][]
 	{\ensure@pseudocode
 	\lstset{
-		keywords={Input,Output,Complexity,while,do,return,for,if,then,else,True,False,None},
+		keywords={Input,Output,Complexity,while,do,return,for,to,if,then,else,True,False,None,and,or,nil,len},
 		literate={<-}{{\pseudocodeleftarrow}}2
 			{->} {{\pseudocoderightarrow}}2
 			{(/)}{{\pseudocodeemptyset}}2
@@ -206,6 +239,7 @@
 \let\Bf\textbf
 \let\It\textit
 \let\Tt\texttt
+\let\ac\textsc
 
 \renewcommand{\labelitemi}{---}
 \setlist[1]{
@@ -249,7 +283,6 @@
 \setlength{\problemindent}{1in}
 
 \newcounter{problemnumber}
-\stepcounter{problemnumber} % start at 1
 \newcommand{\problem@title}{}
 \define@key{problem}{title}{\renewcommand{\problem@title}{: #1}}
 \define@boolkey{problem}{pagebreak}[true]{\ifKV@problem@pagebreak
@@ -273,13 +306,39 @@
 	\vspace*{2in}%
 	\begin{center}%
 	\Large\begin{tabular}{r|l}
-	\ifx\undefined\problemset@assignment\else assignment & \problemset@assignment \\\fi
+	\if\relax\problemset@assignment\else assignment & \problemset@assignment \\\fi
 	by & \@author \\
-	\ifx\undefined\problemset@course\else course & \problemset@course \\\fi
-	\ifx\undefined\problemset@instructor\else instructor & \problemset@instructor \\\fi
-	\ifx\undefined\problemset@due\else due & \problemset@due \\\fi
+	\if\relax\problemset@course\else course & \problemset@course \\\fi
+	\if\relax\problemset@instructor\else instructor & \problemset@instructor \\\fi
+	\if\relax\problemset@due\else due & \problemset@due \\\fi
 	\end{tabular}%
 	\end{center}%
 	\pagebreak}
 
-\endinput
+\NewDocumentEnvironment{ganttschedule}{m o} % total size, title
+	{\ifgantt@loaded
+	\else
+		\PackageError{brandeis-problemset}{ganttschedule enviornment
+		not loaded in preamble}{Did you mean to use the 'gantt'
+		option for the brandeis-problemset document class?}
+	\fi
+	\setlength{\gantt@unit}{\linewidth / \real{#1}}%
+	\setcounter{@gantt@time}{0}%
+	\DeclareDocumentCommand{\burst}{m m} % pid, burst
+		{\setcounter{gantt@time@after}{\value{@gantt@time}}%
+		\addtocounter{gantt@time@after}{##2}%
+		\FPeval\gantthalf{(\arabic{@gantt@time}
+			+ \arabic{gantt@time@after}) / 2}%
+
+		\draw (\value{@gantt@time}, 0) rectangle
+			(\value{gantt@time@after}, 1);
+		\node at (\gantthalf, 0.5) {$P_{##1}$};
+		\draw [|<->|] (\value{@gantt@time} + 0.05, 1.25)
+			-- node[above=1mm] {##2}
+			(\value{gantt@time@after} - 0.05, 1.25);
+
+		\setcounter{@gantt@time}{\value{gantt@time@after}}}%
+
+	\IfValueT{#2}{\begin{center} #2 \end{center}}%
+	\begin{tikzpicture}[x=\gantt@unit]}
+	{\end{tikzpicture}}
