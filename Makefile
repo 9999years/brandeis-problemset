@@ -32,6 +32,6 @@ clean:
 	rm ${PACKAGE}.tar.gz
 	latexmk -norc -C
 
-install: problemset
+install: ${PACKAGE}
 	install -d ${INSTALL_DIR}
 	install $(DIST_FILES) ${INSTALL_DIR}
