@@ -2,7 +2,7 @@
 \usepackage{brandeis-problemset-doc}
 \author{Rebecca Turner\thanks{Brandeis University; \email{rebeccaturner@brandeis.edu}}}
 \title{The \bps\ Document Class}
-\date{2018-10-19}
+\date{2018-10-24}
 
 \begin{document}
 \maketitle
@@ -22,7 +22,7 @@
 
 \note{The \bps\ document class should be considered experimental; the only
 stable \textsc{api} is that of the \env{problem} environment.}
-\note{Browse the sources, contribute, or complain at
+\note{Browse the sources, contribute, or complain at \\
 	\https{github.com/9999years/brandeis-problemset}}
 
 \tableofcontents
@@ -195,6 +195,11 @@ number & A problem number; if given, the problem-number counter
 	will not advance. The number must be robust, because it goes inside
 	a \cs{section}. \\
 pagebreak & True/false (default: true). Add a pagebreak before the problem? \\
+label & Adds a custom label to the problem with \cs{label} that can be used
+	with \cs{ref} \\
+part & Indicates that this problem starts a new ``part'' of the assignment
+	\\
+partlabel & Adds a custom label to this part; see \option{label} \\
 \end{Optionlist}
 
 Vertical material is allowed in a~\env{problem}.
@@ -304,6 +309,9 @@ Any extra options are passed directly to the \ctan{listings} package.
 An environment for drawing Gantt charts indicating process scheduling. The
 mandatory argument indicates how small the grid should be; \texttt{19}
 subdivides the line into 19 cells.
+
+To use the \env{ganttschedule} environment, make sure to use the
+\option{gantt} package option.
 
 Within a \env{ganttschedule}, use the \cs{burst} command to indicate an
 active process (i.e.\ a process burst).
@@ -431,5 +439,28 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 \end{ganttschedule}
 \end{document}
 \end{latexcode}
+
+\pagebreak
+\begin{changelog}
+\shortversion{v=0.1.0, date=2018-10-19, author=Rebecca Turner,
+	changes=Initial beta as \ltxclass{problemset}.}
+\begin{version}{v=0.2.0, date=2018-10-20, author=Rebecca Turner}
+	\item Renamed to \bps.
+	\added license header.
+	\added \env{ganttschedule} environment.
+	\added keywords to pseudocode environment: \texttt{and}, \texttt{or},
+		\texttt{nil}, and \texttt{len}.
+	\added \cs{ac} command for acronyms.
+	\added package example.
+\end{version}
+
+\begin{version}{v=0.3.0, date=2018-10-24, author=Rebecca Turner}
+	\added changelog.
+	\added support for \cs{part}s and referencing problems.
+	\added options to \env{problem} environment: \option{part},
+		\option{label}, and \option{partlabel}.
+	\added \cs{maketitle} (contrast with \cs{maketitlepage}).
+\end{version}
+\end{changelog}
 
 \end{document}

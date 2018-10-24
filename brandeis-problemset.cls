@@ -1,4 +1,4 @@
-\ProvidesClass{brandeis-problemset}[2018-10-20 0.2.0 COSI Problem sets at Brandeis University]
+\ProvidesClass{brandeis-problemset}[2018-10-24 0.3.0 COSI Problem sets at Brandeis University]
 % Description: A document class for Brandeis University's computer science
 %              courses' problem sets
 % License:     GPL-3.0
@@ -267,17 +267,34 @@
 \fancypagestyle{plain}{\fancyhead[L]{}}
 \AtBeginDocument{\pagestyle{fancy}}
 
-\titleformat{\section}{}{}{0em}{\bfseries\large}[]
-\titleformat{\subsection}{}{}{0em}{\llap{\alph{subsection}.\hspace{1em}}}[]
+% {command}[shape]{format}{label}{sep}{before}[after]
+\titleformat{\part}[hang]{\bfseries\Large}{Part \thepart}{0em}{}[]
+\titleformat{\section}{\bfseries\large}{}{0em}{}[]
+\titleformat{\subsection}{\llap{\thesubsection.}}{}{1em}{}[]
+% {command}{left}{before}{after}[right]
+\titlespacing{\part}{0em}{-0.25in}{0em}[0em]
 \titlespacing{\section}{0em}{1em}{0em}[0em]
 \titlespacing{\subsection}{0em}{1em}{0em}[0em]
 
+\titlecontents{part}
+	[3.8em] % left
+	{\large\bfseries} % above-code
+	% numbered entry format
+	{\hspace*{-3.8em}\large\bfseries\contentspage\hspace*{3.8em}}
+	% numberless entry format
+	{\hspace*{-2.3em}}
+	% filler pg format
+	{}
+	% below code
+	[]
+
 \titlecontents{section}
-	[3.8em] % ie, 1.5em (chapter) + 2.3em
+	[4.8em]
 	{}
 	{\hspace*{-3.8em}\contentspage\hspace*{3.8em}}
 	{\hspace*{-2.3em}}
 	{}
+	[]
 
 \newlength{\problemindent}
 \setlength{\problemindent}{1in}
@@ -288,15 +305,29 @@
 \define@boolkey{problem}{pagebreak}[true]{\ifKV@problem@pagebreak
 		\vfill\pagebreak
 	\else\fi}
-\define@cmdkey{problem}{number}{}
+\define@cmdkeys{problem}{number, label, partlabel}
+\define@cmdkey{problem}{part}[]{}
 \presetkeys{problem}{pagebreak}{}
 
 \NewDocumentEnvironment{problem}{O{}}{%
 	\setkeys{problem}{#1}%
-	\ifx\cmdKV@problem@number\undefined\stepcounter{problemnumber}%
+	\@ifundefined{cmdKV@problem@number}{%
+		\stepcounter{problemnumber}%
 		\newcommand{\cmdKV@problem@number}{\arabic{problemnumber}}%
-	\else\fi
-	\section{Problem \cmdKV@problem@number\problem@title}
+	}%
+	\@ifundefined{cmdKV@problem@part}{}{%
+		\part{\cmdKV@problem@part}%
+		\@ifundefined{cmdKV@problem@partlabel}{}{%
+			\expandafter\label{\cmdKV@problem@partlabel}
+		}%
+	}
+	\section{Problem \cmdKV@problem@number\problem@title}%
+	% fix up ref commands
+	\edef\@currentlabel{\cmdKV@problem@number}%
+	\edef\@currentlabelname{Problem \cmdKV@problem@number\problem@title}%
+	\@ifundefined{cmdKV@problem@label}{}{%
+		\expandafter\label{\cmdKV@problem@label}%
+	}%
 	\begin{adjustwidth}{\problemindent}{0pt}}
 	{\end{adjustwidth}}
 
@@ -310,10 +341,24 @@
 	by & \@author \\
 	\if\relax\problemset@course\else course & \problemset@course \\\fi
 	\if\relax\problemset@instructor\else instructor & \problemset@instructor \\\fi
-	\if\relax\problemset@due\else due & \problemset@due \\\fi
+	\if\relax\problemset@duedate\else due & \problemset@duedate \\\fi
 	\end{tabular}%
 	\end{center}%
 	\pagebreak}
+
+\renewcommand{\maketitle}{\thispagestyle{empty}%
+	%\vspace*{2in}%
+	\begin{center}%
+	\large\begin{tabular}{r|l}
+	\@ifundefined{problemset@assignment}{}{assignment & \problemset@assignment \\}
+	by & \@author \\
+	\@ifundefined{problemset@course}{}{course & \problemset@course \\}
+	\@ifundefined{problemset@instructor}{}{instructor & \problemset@instructor \\}
+	\@ifundefined{problemset@duedate}{}{due & \problemset@duedate \\}
+	\end{tabular}%
+	\end{center}%
+	\vspace*{2em}%
+	}
 
 \NewDocumentEnvironment{ganttschedule}{m o} % total size, title
 	{\ifgantt@loaded

@@ -9,6 +9,7 @@
 \usepackage{textcomp} % needed for listings
 \usepackage{xparse}
 \usepackage{hologo} % xetex, etc. logos
+\usepackage{xkeyval}
 
 \newcommand{\email}[1]{\href{mailto:#1}{\texttt{#1}}}
 \newcommand{\https}[1]{\href{https://#1}{\texttt{#1}}}
@@ -28,3 +29,30 @@
 	{\lstset{style=lstDemoStyleLaTeXCode}%
 	}
 	{}
+
+\define@cmdkeys{version}{author, version, date, changes}
+\define@key{version}{v}{\def\cmdKV@version@version{#1}}
+\presetkeys{version}{author={}, version={}, date={}, changes={}}{}
+\NewDocumentEnvironment{changelog}{}
+	{
+	\section{Changelog}
+	\NewDocumentEnvironment{version}{m}
+		{
+		\setkeys{version}{##1}
+		\item[\cmdKV@version@version] \cmdKV@version@author\
+			(\cmdKV@version@date)
+		\begin{itemize}
+			\NewDocumentCommand{\added}{}{\item Added\ }
+		}
+		{
+		\end{itemize}
+		}
+	\NewDocumentCommand{\shortversion}{m}{
+		\setkeys{version}{##1}
+		\item[\cmdKV@version@version] \cmdKV@version@author\
+			(\cmdKV@version@date) --- \cmdKV@version@changes}
+	\begin{description}
+	}
+	{
+	\end{description}
+	}
