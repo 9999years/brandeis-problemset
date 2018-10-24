@@ -1,7 +1,7 @@
 PACKAGE := brandeis-problemset
 DIST_FILES := ${PACKAGE}.cls ${PACKAGE}.tex ${PACKAGE}-doc.sty ${PACKAGE}.pdf README.md example.tex example.pdf
-TEXMF_ROOT := "${HOME}/texmf"
-INSTALL_DIR := "$(TEXMF_ROOT)/tex/latex/${PACKAGE}"
+TEXMF_ROOT := ${HOME}/texmf
+INSTALL_DIR := $(TEXMF_ROOT)/tex/latex/${PACKAGE}
 
 ${PACKAGE}.pdf: ${PACKAGE}.tex
 	latexmk -norc -pdf $?
@@ -12,8 +12,7 @@ example.pdf: example.tex
 ${PACKAGE}: $(DIST_FILES)
 	mkdir ${PACKAGE}
 	cp -t ${PACKAGE} $?
-	chmod -x ${PACKAGE}/*
-	chmod -x ${PACKAGE}
+	chmod -x,+r ${PACKAGE}/*
 
 ${PACKAGE}.tar.gz: ${PACKAGE}
 	tar -czf $@ $?
