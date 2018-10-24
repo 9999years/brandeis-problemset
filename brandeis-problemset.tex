@@ -87,6 +87,8 @@ commands).
 	gantt &  Load packages for the \env{ganttschedule} environment \\
 	antonella & Use Dr.\ Antonella DiLillio's preferred styles (Courier
 		for code) \\
+	solutions & Include \env{solution} environments in compiled
+		document. \\
 \end{Optionlist}
 
 Given that \cs{documentclass} option parsing is much more limited than other
@@ -120,6 +122,8 @@ options.
 	antonella & True/false (default: false; if no value specified,
 		assumes true); use Dr.\ Antonella DiLillio's preferred
 		styles (Courier for code) \\
+	solutions & Include \env{solution} environments in compiled
+		document. \\
 	\end{Optionlist}
 \end{table}
 \end{macro}
@@ -203,6 +207,20 @@ partlabel & Adds a custom label to this part; see \option{label} \\
 \end{Optionlist}
 
 Vertical material is allowed in a~\env{problem}.
+\end{macro}
+
+\begin{macro}{solution}
+
+Defines a solution for a problem; a solution prints in blue and is excluded
+from the compiled document entirely unless the \option{solutions} package
+option is given.
+
+In this way, the same \texttt{.tex} file can serve as both a postable assignment
+prompt and an answer key.
+
+\note{The style of solutions is customizable by redefining
+	\cs{solutionstyle}; it's defined to \cs{color}|{blue}| by default.}
+
 \end{macro}
 
 \begin{macro}{\subproblem}\oarg{description}\AfterLastParam Prints a sub-problem, i.e.\ a
@@ -322,11 +340,25 @@ Draw a burst for process \marg{pid} of time length \meta{burst length}.
 
 \note{These aren't really Gantt charts, but that's what Dr.\ Shrira calls
 	them, so that's what they're called here.}
-\note{Because \env{ganttschedule} relies on \ctan{tikz}, \ctan{fp}, and
-	\ctan{calc}, it can add significantly to document compile times.
-	If you intend to use the \env{ganttschedule}
-	environment, make sure to use the \option{gantt} class option or set
-	\option{gantt} in \cs{problemsetsetup}.}
+\cprotect\note{Because \env{ganttschedule} relies on \ctan{tikz}, \ctan{fp},
+	and \ctan{calc}, it can add significantly to document compile times. If
+	you intend to use the \env{ganttschedule} environment, make sure to use
+	the \option{gantt} class option or set \option{gantt} in
+	\cs{problemsetsetup}. If you fail to include the \option{gantt} option,
+	you will see an error message:
+
+\begin{latexcode}
+! Package brandeis-problemset Error: ganttschedule enviornment not loaded in preamble.
+
+See the brandeis-problemset package documentation for explanation.
+Type  H <return>  for immediate help.
+l.4 \burst
+          {1}{1}
+? H
+Did you mean to use the 'gantt' option for the brandeis-problemset document class?
+
+\end{latexcode}
+}
 
 \begin{latexcode}
 \begin{ganttschedule}{19}
@@ -441,10 +473,24 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 \end{latexcode}
 
 \pagebreak
-\begin{changelog}
-\shortversion{v=0.1.0, date=2018-10-19, author=Rebecca Turner,
-	changes=Initial beta as \ltxclass{problemset}.}
-\begin{version}{v=0.2.0, date=2018-10-20, author=Rebecca Turner}
+\begin{changelog}[author=Rebecca Turner]
+
+\begin{version}{v=0.4.0}
+	\added \env{solution} environment and \option{solutions} class
+		option.
+	\fixed Boolean class options being overwritten by keys defined for
+		\cs{problemsetsetup}
+\end{version}
+
+\begin{version}{v=0.3.0, date=2018-10-24}
+	\added changelog.
+	\added support for \cs{part}s and referencing problems.
+	\added options to \env{problem} environment: \option{part},
+		\option{label}, and \option{partlabel}.
+	\added \cs{maketitle} (contrast with \cs{maketitlepage}).
+\end{version}
+
+\begin{version}{v=0.2.0, date=2018-10-20}
 	\item Renamed to \bps.
 	\added license header.
 	\added \env{ganttschedule} environment.
@@ -454,13 +500,8 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 	\added package example.
 \end{version}
 
-\begin{version}{v=0.3.0, date=2018-10-24, author=Rebecca Turner}
-	\added changelog.
-	\added support for \cs{part}s and referencing problems.
-	\added options to \env{problem} environment: \option{part},
-		\option{label}, and \option{partlabel}.
-	\added \cs{maketitle} (contrast with \cs{maketitlepage}).
-\end{version}
+\shortversion{v=0.1.0, date=2018-10-19,
+	changes=Initial beta as \ltxclass{problemset}.}
 \end{changelog}
 
 \end{document}

@@ -1,5 +1,6 @@
 PACKAGE := brandeis-problemset
-DIST_FILES := ${PACKAGE}.cls ${PACKAGE}.tex ${PACKAGE}-doc.sty ${PACKAGE}.pdf README.md example.tex example.pdf
+DIST_FILES := ${PACKAGE}.cls ${PACKAGE}.tex ${PACKAGE}-doc.sty ${PACKAGE}.pdf \
+	README.md example.tex example.pdf LICENSE.md
 TEXMF_ROOT := ${HOME}/texmf
 INSTALL_DIR := $(TEXMF_ROOT)/tex/latex/${PACKAGE}
 

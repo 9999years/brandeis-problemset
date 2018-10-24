@@ -10,10 +10,14 @@
 \newcommand{\cpu}{\ac{cpu}}
 \begin{document}
 
-\Bf{Note:} This example document is provided for illustrative purposes. The
-solutions below are not guaranteed to be correct or relevant.
+\maketitle
 
-\begin{problem}
+\Bf{Note:} This example document is provided for illustrative purposes. The
+solutions below are not guaranteed to be correct, complete, or relevant.
+
+\tableofcontents
+
+\begin{problem}[part]
 	An assembly language program implements the following loop:
 
 \begin{lstlisting}[language=c]
@@ -29,6 +33,9 @@ while(i <= 50) {
 	where $x$ is the address of the memory location where the assembly
 	program is loaded. Write the assembly program using the assembly
 	language introduced in class.
+
+	For a completely unrelated problem, see problem~\ref{schedule} (this
+	is an example of a \lstinline!\label! / \lstinline!\ref! pair).
 \end{problem}
 
 \begin{assembly}
@@ -95,6 +102,10 @@ LOOP:   STORE R2, @R1       ; *A = i
 	\end{enumerate}
 \end{problem}
 
+\begin{solution}
+The blue text here is a solution; it will disappear if the
+\Tt{solutions} class option is removed.
+
 ``Rule $n$'' should be taken to refer to the $n$th rule on page 3 of the 5th
 lecture notes, and ``$a$ is faster-growing than $b$'' is written as ``$O(a)
 > O(b)$''.
@@ -136,6 +147,7 @@ O(n^5)$.
 \item $c = 2, n_0 = 1$
 
 \end{enumerate}
+\end{solution}
 
 \begin{problem}
 	What do the following two algorithms do? Analyze its worst-case
@@ -177,7 +189,7 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 $\Rm{Bar}(a, n)$ \It{also} computes $a^n$, and runs in $O(\log n)$
 time --- this is referred to as exponentiation by squaring.
 
-\begin{problem}[number=5.4]
+\begin{problem}[number=5.4, part=Scheduling, label=schedule]
 	Consider the following set of processes, with the length of the
 	\cpu\ burst given in milliseconds:
 

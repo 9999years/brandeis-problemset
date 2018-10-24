@@ -40,12 +40,14 @@
 
 % utility
 \RequirePackage{xkeyval}
+\RequirePackage{environ}
 \RequirePackage{geometry}
 \RequirePackage{changepage} % for adjustwidth env
 
 % formatting
 \RequirePackage{hyperref}
 \RequirePackage{xcolor}
+\RequirePackage{comment}
 \RequirePackage{listings}
 \RequirePackage{fancyhdr}
 \RequirePackage{enumitem}
@@ -74,6 +76,7 @@
 \DeclareStringOption[\relax]{course}
 \DeclareBoolOption{antonella}
 \DeclareBoolOption{gantt}
+\DeclareBoolOption{solutions}
 \ProcessKeyvalOptions*
 
 \newif\ifpseudocode@loaded
@@ -179,13 +182,23 @@
 
 \define@cmdkeys{problemset}[problemset@]{duedate, instructor, course, assignment}
 \define@key{problemset}{number}{\problemsetnumber{#1}}
-\define@key{problemset}{coursenumber}{\course{#1}}
+\define@key{problemset}{coursenumber}{\coursenumber{#1}}
 \define@key{problemset}{codefont}{%
 	\setcodefont{#1}
 }
-\define@boolkey{problemset}[problemset@]{antonella}[true]{}
-\define@boolkey{problemset}[problemset@]{gantt}[true]{\@loadgantt}
-\newcommand{\problemsetsetup}[1] {\setkeys{problemset}{#1}}
+\define@boolkey{problemset}{antonella}[true]{}
+\define@boolkey{problemset}{solutions}[true]{}
+\define@boolkey{problemset}{gantt}[true]{\@loadgantt}
+% carry values from package options over
+\newcommand{\@carryclasskey}[1]{%
+	\csname ifproblemset@#1\endcsname
+		\presetkeys{problemset}{#1}{}
+	\fi
+}
+\@carryclasskey{antonella}
+\@carryclasskey{solutions}
+\@carryclasskey{gantt}
+\newcommand{\problemsetsetup}[1]{\setkeys{problemset}{#1}}
 
 % listings
 \lstset{
@@ -268,7 +281,7 @@
 \AtBeginDocument{\pagestyle{fancy}}
 
 % {command}[shape]{format}{label}{sep}{before}[after]
-\titleformat{\part}[hang]{\bfseries\Large}{Part \thepart}{0em}{}[]
+\titleformat{\part}{\bfseries\Large}{Part \thepart}{1em}{}[]
 \titleformat{\section}{\bfseries\large}{}{0em}{}[]
 \titleformat{\subsection}{\llap{\thesubsection.}}{}{1em}{}[]
 % {command}{left}{before}{after}[right]
@@ -314,13 +327,13 @@
 	\@ifundefined{cmdKV@problem@number}{%
 		\stepcounter{problemnumber}%
 		\newcommand{\cmdKV@problem@number}{\arabic{problemnumber}}%
-	}%
+	}{}%
 	\@ifundefined{cmdKV@problem@part}{}{%
 		\part{\cmdKV@problem@part}%
 		\@ifundefined{cmdKV@problem@partlabel}{}{%
 			\expandafter\label{\cmdKV@problem@partlabel}
 		}%
-	}
+	}%
 	\section{Problem \cmdKV@problem@number\problem@title}%
 	% fix up ref commands
 	\edef\@currentlabel{\cmdKV@problem@number}%
@@ -332,6 +345,11 @@
 	{\end{adjustwidth}}
 
 \newcommand{\subproblem}[1][]{\subsection{#1}}
+
+\newcommand{\solutionstyle}{\color{blue}}
+\NewEnviron{solution}{%
+	\solutionstyle%
+	\ifproblemset@solutions\expandafter\BODY\fi}
 
 \newcommand{\maketitlepage}{\thispagestyle{empty}%
 	\vspace*{2in}%
