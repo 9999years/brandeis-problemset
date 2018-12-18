@@ -1,4 +1,4 @@
-\ProvidesClass{brandeis-problemset}[2018-10-24 0.3.0 COSI Problem sets at Brandeis University]
+\ProvidesClass{brandeis-problemset}[2018-10-24 0.3.1 COSI Problem sets at Brandeis University]
 % Description: A document class for Brandeis University's computer science
 %              courses' problem sets
 % License:     GPL-3.0
@@ -319,7 +319,12 @@
 		\vfill\pagebreak
 	\else\fi}
 \define@cmdkeys{problem}{number, label, partlabel}
-\define@cmdkey{problem}{part}[]{}
+\define@cmdkey{problem}{part}[]{%
+		\part{\cmdKV@problem@part}%
+		\@ifundefined{cmdKV@problem@partlabel}{}{%
+			\expandafter\label{\cmdKV@problem@partlabel}%
+		}%
+}
 \presetkeys{problem}{pagebreak}{}
 
 \NewDocumentEnvironment{problem}{O{}}{%
@@ -328,12 +333,6 @@
 		\stepcounter{problemnumber}%
 		\newcommand{\cmdKV@problem@number}{\arabic{problemnumber}}%
 	}{}%
-	\@ifundefined{cmdKV@problem@part}{}{%
-		\part{\cmdKV@problem@part}%
-		\@ifundefined{cmdKV@problem@partlabel}{}{%
-			\expandafter\label{\cmdKV@problem@partlabel}
-		}%
-	}%
 	\section{Problem \cmdKV@problem@number\problem@title}%
 	% fix up ref commands
 	\edef\@currentlabel{\cmdKV@problem@number}%
