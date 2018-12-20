@@ -1,4 +1,4 @@
-\ProvidesClass{brandeis-problemset}[2018-10-24 0.3.1 COSI Problem sets at Brandeis University]
+\ProvidesClass{brandeis-problemset}[2018-12-20 0.4.0 COSI Problem sets at Brandeis University]
 % Description: A document class for Brandeis University's computer science
 %              courses' problem sets
 % License:     GPL-3.0
@@ -70,10 +70,6 @@
 	family=problemset,
 	prefix=problemset@,
 }
-\DeclareStringOption[\relax]{duedate}
-\DeclareStringOption[\relax]{assignment}
-\DeclareStringOption[\relax]{instructor}
-\DeclareStringOption[\relax]{course}
 \DeclareBoolOption{antonella}
 \DeclareBoolOption{gantt}
 \DeclareBoolOption{solutions}
@@ -165,7 +161,7 @@
 % if 'gantt' package option was given
 \@loadgantt
 
-% additional options
+% config commands
 \newcommand{\duedate}[1]         {\renewcommand{\problemset@duedate}{#1}}
 \newcommand{\instructor}[1]      {\renewcommand{\problemset@instructor}{#1}}
 \newcommand{\course}[1]          {\renewcommand{\problemset@course}{#1}}

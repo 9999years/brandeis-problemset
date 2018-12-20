@@ -22,10 +22,10 @@ ${PACKAGE}.tar.gz: ${PACKAGE}
 dist: ${PACKAGE}.tar.gz
 
 tidy:
-	# copied files
-	rm -r ${PACKAGE}
 	# all generated files but the pdf
 	latexmk -norc -c
+	# copied files
+	rm -r ${PACKAGE}
 
 clean:
 	make tidy

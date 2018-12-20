@@ -11,6 +11,7 @@
 \usepackage{hologo} % xetex, etc. logos
 \usepackage{xkeyval}
 \usepackage{cprotect}
+\usepackage{changelog}
 
 \newcommand{\email}[1]{\href{mailto:#1}{\texttt{#1}}}
 \newcommand{\https}[1]{\href{https://#1}{\texttt{#1}}}
@@ -30,39 +31,3 @@
 	{\lstset{style=lstDemoStyleLaTeXCode}%
 	}
 	{}
-
-\define@cmdkeys{version}{author, version, date, changes}
-\define@key{version}{v}{\def\cmdKV@version@version{#1}}
-\NewDocumentEnvironment{changelog}{o}
-	{\section{Changelog}
-	\IfValueT{#1}{\setkeys{version}{#1}}%
-	\NewDocumentEnvironment{version}{m}
-		{\shortversion{##1}%
-		\begin{itemize}
-			\NewDocumentCommand{\added}{}{\item Added\ }
-			\NewDocumentCommand{\removed}{}{\item Removed\ }
-			\NewDocumentCommand{\fixed}{}{\item Fixed\ }
-		}
-		{\end{itemize}}
-	\NewDocumentCommand{\shortversion}{m}{
-		\setkeys{version}{##1}
-		\@ifundefined{cmdKV@version@version}{
-			\@ifundefined{cmdKV@version@date}{
-				\PackageError{brandeis-problemset-doc}{Either
-					version number or date mandatory in
-					version environment}{}
-			}{%
-				\let\cmdKV@version@version\cmdKV@version@date
-				\let\cmdKV@version@date\undefined
-			}%
-		}{}
-		\item[\cmdKV@version@version]
-			\@ifundefined{cmdKV@version@author}{}{\cmdKV@version@author}
-			\@ifundefined{cmdKV@version@date}{%
-				% if both undefined, add a linebreak
-				\@ifundefined{cmdKV@version@author}{\hspace{0pt}}{}%
-			}{(\cmdKV@version@date)}%
-			\@ifundefined{cmdKV@version@changes}{}{ --- \cmdKV@version@changes}
-			}
-	\begin{description}}
-	{\end{description}}

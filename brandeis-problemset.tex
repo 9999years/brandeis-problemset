@@ -2,8 +2,7 @@
 \usepackage{brandeis-problemset-doc}
 \author{Rebecca Turner\thanks{Brandeis University; \email{rebeccaturner@brandeis.edu}}}
 \title{The \bps\ Document Class}
-\date{2018-10-24}
-
+\date{2018-12-20}
 \begin{document}
 \maketitle
 
@@ -73,26 +72,18 @@ due date).
 
 \subsection{Class options}
 
-\bps\ defines a limited set of key-value options that may be set at
-\cs{documentclass}-time. These may be removed entirely in a future release,
-as it seems ``messy'' to have three configuration methods
-(\cs{documentclass} options, \cs{problemsetsetup}, and singular option
-commands).
+Class options are limited to configuration options which require the loading
+of fonts or other packages; ``string'' settings like the assignment's due
+date are configured either with the \cs{problemsetsetup} command or the
+commands described in section~\ref{sss:configcommands}.
 
 \begin{Optionlist}
-	duedate & Assignment due date in full \\
-	instructor & Instructor name in full \\
-	course & Course name in full \\
-	assignment & Assignment name in full \\
 	gantt &  Load packages for the \env{ganttschedule} environment \\
 	antonella & Use Dr.\ Antonella DiLillio's preferred styles (Courier
 		for code) \\
 	solutions & Include \env{solution} environments in compiled
 		document. \\
 \end{Optionlist}
-
-Given that \cs{documentclass} option parsing is much more limited than other
-key-value interfaces, these options have limited capabilities.
 
 \subsection{Setting options after loading \bps}
 
@@ -112,7 +103,10 @@ options.
 	assignment & Assignment name in full. \\
 	number & Assignment name shorthand; use \texttt{3} for ``Problem Set
 		3''. \\
-	duedate & Due date, e.g.\ \texttt{2018-10-18}; not parsed at all. \\
+	duedate & Due date, e.g.\ \texttt{2018-10-18}; not parsed at all,
+		but
+		\href{https://en.wikipedia.org/wiki/ISO_8601}{\textsc{iso}
+		8601 dates} are highly recommended. \\
 	instructor & Course instructor. \\
 	codefont & With \fontspecok, pass the given font to \cs{setmonofont}
 		and enable Unicode shortcuts for the \env{pseudocode}
@@ -128,8 +122,12 @@ options.
 \end{table}
 \end{macro}
 
-\bps\ additionally provides a number of configuration commands with similar
-interfaces as the \TeX\ macros \cs{author}, \cs{title}, and \cs{date}.
+\subsubsection{Configuration commands}%
+\label{sss:configcommands}
+
+\bps\ additionally provides a number of configuration commands for setting a
+single opption with similar interfaces as the \TeX\ macros \cs{author},
+\cs{title}, and \cs{date}.
 
 \begin{macro}{\duedate}\marg{date} sets the due date in full.\end{macro}
 \begin{macro}{\instructor}\marg{name} sets the instructor name.\end{macro}
@@ -149,10 +147,14 @@ it for shortcuts in the \env{pseudocode} environment.
 
 \subsection{Practical usage}
 
-You may find it useful to define a \ext{sty} file for each course. For
-instance, \filename{cosi21a.sty} might read:
+You may find it useful to define a customized document class for each
+course. There's no reason to install these to some system-wide directory; it
+makes sense for them to live in the same directory as the problem set source
+files. For instance, \filename{cosi21a.cls} might read:
 
-\begin{latexfile}{cosi21a.sty}
+\begin{latexfile}{cosi21a.cls}
+\LoadClass{brandeis-problemset}
+
 % set course/author data
 \problemsetsetup{
 	instructor=Dr.\ Antonella DiLillio,
@@ -172,8 +174,8 @@ instance, \filename{cosi21a.sty} might read:
 and then \filename{ps1.tex} might read:
 
 \begin{latexfile}{ps1.tex}
-\documentclass{problemset}
-\usepackage{cosi21a}
+\documentclass{cosi21a}
+% stuff specific to this assignment
 \problemsetnumber{1}
 \duedate{2018-10-29}
 \begin{document}
@@ -234,16 +236,18 @@ specified with \meta{colspec}. \cs{Th} is backed by \cs{multicolumn}.
 
 \begin{macro}{pseudocode}\oarg{keywords}\AfterLastParam Prints
 pseudocode.\footnote{Designed for \cosi{21a} as taught by Dr.\ Antonella
-DiLillo} Several shortcuts are defined, as shown in
+DiLillo}
+
+Several ``shortcuts,'' which replace a source-code sequence like
+\texttt{->} with a symbol like $\rightarrow$, are shown in
 table~\ref{tab:pseudocode}.
 
-These shortcuts display in
-\cs{pseudocodesymbolfont} (default: \cs{ttfamily}), which may be redefined
-if you prefer something else. The easiest way to change
-\cs{pseudocodesymbolfont} is with \cs{setcodefont}. If you use the
-\option{antonella} option with \fontspecok, \bps\ will load \ctan{lm-math}
-and display the symbols seen in table~\ref{tab:pseudocode}, which look
-significantly better with Courier than \textsc{stix}' symbols.
+These shortcuts display in \cs{pseudocodesymbolfont} (default:
+\cs{ttfamily}), which may be redefined if you prefer something else. The
+easiest way to change \cs{pseudocodesymbolfont} is with \cs{setcodefont}. If
+you use the \option{antonella} option with \fontspecok, \bps\ will load
+\ctan{lm-math} and display the symbols seen in table~\ref{tab:pseudocode},
+which look significantly better with Courier than \textsc{stix}' symbols.
 
 \begin{table}[h]
 	\centering
@@ -480,6 +484,11 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 		option.
 	\fixed Boolean class options being overwritten by keys defined for
 		\cs{problemsetsetup}
+	\removed Assignment- and course-specific class options
+		\option{duedate}, \option{assignment}, \option{instructor},
+		and \option{course}. These settings should be configured
+		with either \cs{problemsetsetup} or their specific commands.
+		(\cs{duedate}, \cs{instructor}, etc.)
 \end{version}
 
 \begin{version}{v=0.3.0, date=2018-10-24}
