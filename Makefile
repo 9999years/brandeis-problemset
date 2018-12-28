@@ -3,12 +3,13 @@ DIST_FILES := ${PACKAGE}.cls ${PACKAGE}.tex ${PACKAGE}-doc.sty ${PACKAGE}.pdf \
 	README.md example.tex example.pdf LICENSE.md
 TEXMF_ROOT := ${HOME}/texmf
 INSTALL_DIR := $(TEXMF_ROOT)/tex/latex/${PACKAGE}
+LATEXMK = latexmk -aux-directory=extra -pdf -r ./.latexmkrc
 
 ${PACKAGE}.pdf: ${PACKAGE}.tex
-	latexmk -norc -pdf $?
+	$(LATEXMK) $?
 
 example.pdf: example.tex
-	latexmk -norc -pdf $?
+	$(LATEXMK) $?
 
 ${PACKAGE}: $(DIST_FILES)
 	mkdir ${PACKAGE}
@@ -23,14 +24,15 @@ dist: ${PACKAGE}.tar.gz
 
 tidy:
 	# all generated files but the pdf
-	latexmk -norc -c
+	$(LATEXMK) -c
+	rm -r extra
 	# copied files
 	rm -r ${PACKAGE}
 
 clean:
+	$(LATEXMK) -C
 	make tidy
 	rm ${PACKAGE}.tar.gz
-	latexmk -norc -C
 
 install: ${PACKAGE}
 	install -d ${INSTALL_DIR}
