@@ -71,6 +71,7 @@
 	prefix=problemset@,
 }
 \DeclareBoolOption{antonella}
+\DeclareBoolOption{scheme}
 \DeclareBoolOption{gantt}
 \DeclareBoolOption{solutions}
 \ProcessKeyvalOptions*
@@ -97,6 +98,38 @@
 \else
 	\RequirePackage{tgtermes}
 	\RequirePackage{stix}
+\fi
+
+\ifproblemset@scheme
+	% from https://github.com/stuhlmueller/scheme-listings
+	\lstdefinelanguage{scheme}{
+		morekeywords=[1]{define, define-syntax, define-macro, lambda, define-stream, stream-lambda},
+		morekeywords=[2]{begin, call-with-current-continuation, call/cc,
+		call-with-input-file, call-with-output-file, case, cond,
+		do, else, for-each, if,
+		let*, let, let-syntax, letrec, letrec-syntax,
+		let-values, let*-values,
+		and, or, not, delay, force,
+		quasiquote, quote, unquote, unquote-splicing,
+		map, fold, syntax, syntax-rules, eval, environment, query },
+		morekeywords=[3]{import, export},
+		alsodigit=!\$\%&*+-./:<=>?@^_~,
+		sensitive=true,
+		morecomment=[l]{;},
+		morecomment=[s]{\#|}{|\#},
+		morestring=[b]",
+		basicstyle=\small\ttfamily,
+		keywordstyle=\bf\ttfamily\color[rgb]{0,.3,.7},
+		commentstyle=\color[rgb]{0.133,0.545,0.133},
+		stringstyle={\color[rgb]{0.75,0.49,0.07}},
+		upquote=true,
+		breaklines=true,
+		breakatwhitespace=true,
+		literate=*{`}{{`}}{1}
+	}
+	\lstnewenvironment{scheme}[1][]
+		{\lstset{language=scheme, #1}}
+		{}
 \fi
 
 \newcommand{\@antonella}{%
@@ -161,6 +194,8 @@
 % if 'gantt' package option was given
 \@loadgantt
 
+\newcommand{\problemset@course}{\relax}
+\newcommand{\problemset@assignment}{\relax}
 % config commands
 \newcommand{\duedate}[1]         {\renewcommand{\problemset@duedate}{#1}}
 \newcommand{\instructor}[1]      {\renewcommand{\problemset@instructor}{#1}}

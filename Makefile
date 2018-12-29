@@ -3,7 +3,7 @@ DIST_FILES := ${PACKAGE}.cls ${PACKAGE}.tex ${PACKAGE}-doc.sty ${PACKAGE}.pdf \
 	README.md example.tex example.pdf LICENSE.md
 TEXMF_ROOT := ${HOME}/texmf
 INSTALL_DIR := $(TEXMF_ROOT)/tex/latex/${PACKAGE}
-LATEXMK = latexmk -aux-directory=extra -pdf -r ./.latexmkrc
+LATEXMK = latexmk -aux-directory=extra -pdf -r ./.latexmkrc -pvc- -pv-
 
 ${PACKAGE}.pdf: ${PACKAGE}.tex
 	$(LATEXMK) $?
