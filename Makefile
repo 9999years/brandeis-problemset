@@ -12,7 +12,7 @@ example.pdf: example.tex
 	$(LATEXMK) $?
 
 ${PACKAGE}: $(DIST_FILES)
-	mkdir ${PACKAGE}
+	mkdir -p ${PACKAGE}
 	cp -t ${PACKAGE} $?
 	chmod -x,+r ${PACKAGE}/*
 
