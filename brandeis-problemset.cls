@@ -1,4 +1,4 @@
-\ProvidesClass{brandeis-problemset}[2018-12-20 0.4.0 COSI Problem sets at Brandeis University]
+\ProvidesClass{brandeis-problemset}[2019-01-03 0.4.1 COSI Problem sets at Brandeis University]
 % Description: A document class for Brandeis University's computer science
 %              courses' problem sets
 % License:     GPL-3.0
@@ -101,34 +101,66 @@
 \fi
 
 \ifproblemset@scheme
-	% from https://github.com/stuhlmueller/scheme-listings
-	\lstdefinelanguage{scheme}{
-		morekeywords=[1]{define, define-syntax, define-macro, lambda, define-stream, stream-lambda},
-		morekeywords=[2]{begin, call-with-current-continuation, call/cc,
-		call-with-input-file, call-with-output-file, case, cond,
-		do, else, for-each, if,
-		let*, let, let-syntax, letrec, letrec-syntax,
-		let-values, let*-values,
-		and, or, not, delay, force,
-		quasiquote, quote, unquote, unquote-splicing,
-		map, fold, syntax, syntax-rules, eval, environment, query },
-		morekeywords=[3]{import, export},
-		alsodigit=!\$\%&*+-./:<=>?@^_~,
+	% Language definition by Rebecca Turner and Andreas Stuhlmüller.
+	\lstdefinelanguage[R5RS]{Scheme}{
+		morekeywords={*,/,<=,<,=>,=,>=,>,+,-,%
+			% ``These procedures are compositions of car and cdr \dots\
+			% Arbitrary compositions, up to four deep, are provided. There are
+			% twenty-eight of these procedures in all.'' (6.3.2)
+			car,cbr,caar,cabr,cbar,cbbr,caaar,caabr,cabar,cabbr,cbaar,%
+			cbabr,cbbar,cbbbr,caaaar,caaabr,caabar,caabbr,cabaar,cababr,%
+			cabbar,cabbbr,cbaaar,cbaabr,cbabar,cbabbr,cbbaar,cbbabr,cbbbar,%
+			cbbbbr,%
+			% Define the rest of the primitives, from R5RS'
+			% \href{https://schemers.org/Documents/Standards/R5RS/HTML/r5rs-Z-H-15.html#%_chap_Temp_11}{``Alphabetic
+			% Index of Definitions of Concepts, Keywords, and Procedures''}
+			abs,acos,and,angle,append,apply,asin,assoc,%
+			assq,assv,atan,begin,boolean?,%
+			call-with-current-continuation,call-with-input-file,%
+			call-with-output-file,call-with-values,case,%
+			ceiling,char->integer,char-alphabetic?,char-ci<=?,char-ci<?,%
+			char-ci=?,char-ci>=?,char-ci>?,char-downcase,char-lower-case?,%
+			char-numeric?,char-ready?,char-upcase,char-upper-case?,%
+			char-whitespace?,char<=?,char<?,char=?,char>=?,char>?,char?,%
+			close-input-port,close-output-port,complex?,cond,cons,cos,%
+			current-input-port,current-output-port,define,define-syntax,delay,%
+			denominator,display,do,dynamic-wind,else,eof-object?,eq?,%
+			equal?,eqv?,eval,even?,exact->inexact,exact?,exp,expt,floor,%
+			for-each,force,gcd,if,imag-part,inexact->exact,inexact?,%
+			input-port?,integer->char,integer?,interaction-environment,lambda,%
+			lcm,length,let,let*,let-syntax,letrec,letrec-syntax,list,%
+			list->string,list->vector,list-ref,list-tail,list?,load,log,%
+			magnitude,make-polar,make-rectangular,make-string,make-vector,%
+			map,max,member,memq,memv,min,modulo,negative?,newline,not,%
+			null-environment,null?,number->string,number?,numerator,odd?,%
+			open-input-file,open-output-file,or,output-port?,pair?,peek-char,%
+			port?,positive?,procedure?,quasiquote,quote,quotient,rational?,%
+			rationalize,read,read-char,real-part,real?,remainder,reverse,%
+			round,scheme-report-environment,set!,set-car!,set-cdr!,setcar,%
+			sin,sqrt,string,string->list,string->number,string->symbol,%
+			string-append,string-ci<=?,string-ci<?,string-ci=?,string-ci>=?,%
+			string-ci>?,string-copy,string-fill!,string-length,string-ref,%
+			string-set!,string<=?,string<?,string=?,string>=?,string>?,%
+			string?,substring,symbol->string,symbol?,syntax-rules,tan,%
+			transcript-off,transcript-on,truncate,values,vector,vector->list,%
+			vector-fill!,vector-length,vector-ref,vector-set!,vector?,%
+			with-input-from-file,with-output-to-file,write,write-char,zero?},
+		otherkeywords={\#b,\#o,\#d,\#x,\#e,\#i,\#t,\#f,%
+			',`,{,},\,\@,...},
+		alsoletter={!\$\%&*/:<=>?@^_~+-},
+		alsodigit={.},
 		sensitive=true,
 		morecomment=[l]{;},
 		morecomment=[s]{\#|}{|\#},
 		morestring=[b]",
-		basicstyle=\small\ttfamily,
-		keywordstyle=\bf\ttfamily\color[rgb]{0,.3,.7},
-		commentstyle=\color[rgb]{0.133,0.545,0.133},
-		stringstyle={\color[rgb]{0.75,0.49,0.07}},
 		upquote=true,
-		breaklines=true,
-		breakatwhitespace=true,
 		literate=*{`}{{`}}{1}
+	}[keywords,comments,strings]
+	\lstset{
+		defaultdialect=[R5RS]Scheme
 	}
 	\lstnewenvironment{scheme}[1][]
-		{\lstset{language=scheme, #1}}
+		{\lstset{language=Scheme, #1}}
 		{}
 \fi
 
@@ -239,7 +271,11 @@
 	aboveskip=1em,
 	belowskip=0.5em,
 	breaklines,
+	breakatwhitespace=true,
 	tabsize=4,
+	keywordstyle={\bf\ttfamily\color[rgb]{0,.3,.7}},
+	commentstyle={\color[rgb]{0.133,0.545,0.133}},
+	stringstyle={\color[rgb]{0.75,0.49,0.07}},
 }
 
 \lstnewenvironment{assembly}[1][]

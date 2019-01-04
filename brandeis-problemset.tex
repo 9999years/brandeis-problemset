@@ -2,7 +2,7 @@
 \usepackage{brandeis-problemset-doc}
 \author{Rebecca Turner\thanks{Brandeis University; \email{rebeccaturner@brandeis.edu}}}
 \title{The \bps\ Document Class}
-\date{2018-12-28}
+\date{2019-01-03}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -484,8 +484,11 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 \end{latexcode}
 
 \begin{changelog}[author=Rebecca Turner]
+\shortversion{v=0.4.1, date=2019-01-03,
+	changes={Updated \env{scheme} environment to properly recognize all
+	primitive functions, added syntax coloring to all code.}}
 
-\begin{version}[v=0.4.0]
+\begin{version}[v=0.4.0, date=2018-12-20]
 \added
 	\item \env{solution} environment and \option{solutions} class
 		option.
@@ -505,9 +508,9 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 
 \begin{version}[v=0.3.0, date=2018-10-24]
 \added
-	\item changelog.
-	\item support for \cs{part}s and referencing problems.
-	\item options to \env{problem} environment: \option{part},
+	\item This changelog.
+	\item Support for \cs{part}s and referencing problems.
+	\item Options to \env{problem} environment: \option{part},
 		\option{label}, and \option{partlabel}.
 	\item \cs{maketitle} (contrast with \cs{maketitlepage}).
 \end{version}
@@ -516,12 +519,12 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 \changed
 	\item Class renamed to from \ltxclass{problemset} to \bps.
 \added
-	\item license header.
+	\item A license header.
 	\item \env{ganttschedule} environment.
-	\item keywords to pseudocode environment: \texttt{and}, \texttt{or},
-		\texttt{nil}, and \texttt{len}.
+	\item Additional keywords for \env{pseudocode} environment:
+		\texttt{and}, \texttt{or}, \texttt{nil}, and \texttt{len}.
 	\item \cs{ac} command for acronyms.
-	\item package example.
+	\item An example document.
 \end{version}
 
 \shortversion{v=0.1.0, date=2018-10-19,

@@ -25,14 +25,14 @@ dist: ${PACKAGE}.tar.gz
 tidy:
 	# all generated files but the pdf
 	$(LATEXMK) -c
-	rm -r extra
+	rm -rf extra
 	# copied files
-	rm -r ${PACKAGE}
+	rm -rf ${PACKAGE}
 
 clean:
 	$(LATEXMK) -C
 	make tidy
-	rm ${PACKAGE}.tar.gz
+	rm -f ${PACKAGE}.tar.gz
 
 install: ${PACKAGE}
 	install -d ${INSTALL_DIR}
