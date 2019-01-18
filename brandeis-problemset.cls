@@ -229,12 +229,12 @@
 \newcommand{\problemset@course}{\relax}
 \newcommand{\problemset@assignment}{\relax}
 % config commands
-\newcommand{\duedate}[1]         {\renewcommand{\problemset@duedate}{#1}}
-\newcommand{\instructor}[1]      {\renewcommand{\problemset@instructor}{#1}}
-\newcommand{\course}[1]          {\renewcommand{\problemset@course}{#1}}
-\newcommand{\coursenumber}[1]    {\renewcommand{\problemset@course}{\Sc{cosi} #1}}
-\newcommand{\assignment}[1]      {\renewcommand{\problemset@assignment}{#1}}
-\newcommand{\problemsetnumber}[1]{\renewcommand{\problemset@assignment}{Problem Set #1}}
+\newcommand{\duedate}[1]         {\def\problemset@duedate{#1}}
+\newcommand{\instructor}[1]      {\def\problemset@instructor{#1}}
+\newcommand{\course}[1]          {\def\problemset@course{#1}}
+\newcommand{\coursenumber}[1]    {\def\problemset@course{\Sc{cosi} #1}}
+\newcommand{\assignment}[1]      {\def\problemset@assignment{#1}}
+\newcommand{\problemsetnumber}[1]{\def\problemset@assignment{Problem Set #1}}
 \newcommand{\setcodefont}[2][]{%
 	% don't fail if fontspec isn't loaded
 	\ifx\setmonofont\undefined\else
@@ -246,6 +246,8 @@
 \define@cmdkeys{problemset}[problemset@]{duedate, instructor, course, assignment}
 \define@key{problemset}{number}{\problemsetnumber{#1}}
 \define@key{problemset}{coursenumber}{\coursenumber{#1}}
+\define@key{problemset}{author}{\author{#1}}
+\define@key{problemset}{date}{\date{#1}}
 \define@key{problemset}{codefont}{%
 	\setcodefont{#1}
 }
