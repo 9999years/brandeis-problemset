@@ -3,14 +3,18 @@ Param(
 	[String] $TexMFRoot = "~/texmf"
 )
 
-$class = "brandeis-problemset"
-$dest = (Join-Path $TexMFRoot  "tex/latex/$class")
+$className = "brandeis-problemset"
+$class = "$className.cls"
+$dest = (Join-Path $TexMFRoot "tex/latex/$class")
+If(!(Test-Path $class)) {
+    Write-Error "$class should exist but doesn't"
+}
 If(!(Test-Path $dest)) {
 	mkdir $dest
 }
 
-cp "$class.cls" $dest
+cp "$class" $dest
 pushd
 cd ~
-kpsewhich "$class.cls"
+kpsewhich "$class"
 popd

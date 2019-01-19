@@ -1,4 +1,4 @@
-\documentclass[gantt]{brandeis-problemset}
+\documentclass[gantt, scheme]{brandeis-problemset}
 \author{Rebecca Turner}
 \problemsetsetup{
 	coursenumber=21a,
@@ -246,4 +246,18 @@ time --- this is referred to as exponentiation by squaring.
 	\end{ganttschedule}
 \end{enumerate}
 
+\begin{problem}
+	Write a Scheme procedure to calculate an arbitrary up-arrow $a \uparrow^n
+	b$.
+\end{problem}
+
+\begin{scheme}
+;;; (up-arrow 2 3 4) = 2^^^4
+(define (up-arrow a n b)
+  (cond ((= n 1) (expt a b))
+        ((and (>= n 1) (= b 0)) 1)
+        (else (up-arrow a
+                        (- n 1)
+                        (up-arrow a n (- b 1))))))
+\end{scheme}
 \end{document}

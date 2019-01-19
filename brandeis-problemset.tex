@@ -2,10 +2,9 @@
 \usepackage{brandeis-problemset-doc}
 \author{Rebecca Turner\thanks{Brandeis University; \email{rebeccaturner@brandeis.edu}}}
 \title{The \bps\ Document Class}
-\date{2018-12-20}
+\date{2019-01-03}
 \begin{document}
 \maketitle
-
 \begin{abstract}
 
 	Brandeis University's computer science (``\textsc{cosi}'') courses
@@ -79,6 +78,8 @@ commands described in section~\ref{sss:configcommands}.
 
 \begin{Optionlist}
 	gantt &  Load packages for the \env{ganttschedule} environment \\
+	scheme & Define the \texttt{scheme} language for the \ctan{listings}
+		package as well as the \env{scheme} shorthand environment. \\
 	antonella & Use Dr.\ Antonella DiLillio's preferred styles (Courier
 		for code) \\
 	solutions & Include \env{solution} environments in compiled
@@ -93,8 +94,7 @@ options.
 
 \begin{table}[h]
 	\centering
-	\caption{Options for \cs{problemsetsetup}; many of these are just used
-	in document headers.}
+	\caption{Options for \cs{problemsetsetup}}
 	\label{tab:problemset-options}
 	\begin{Optionlist}
 	course & Course name in full. \\
@@ -153,7 +153,7 @@ makes sense for them to live in the same directory as the problem set source
 files. For instance, \filename{cosi21a.cls} might read:
 
 \begin{latexfile}{cosi21a.cls}
-\LoadClass{brandeis-problemset}
+\LoadClass[antonella]{brandeis-problemset}
 
 % set course/author data
 \problemsetsetup{
@@ -327,6 +327,13 @@ shorthand environment for a listing of Java code.
 Any extra options are passed directly to the \ctan{listings} package.
 \end{macro}
 
+\begin{macro}{scheme}\oarg{extra options}\AfterLastParam Shorthand
+environment for a listing of Scheme code, useful for \cosi{121b}. Requires
+the \option{scheme} package option to be loaded.
+
+Any extra options are passed directly to the \ctan{listings} package.
+\end{macro}
+
 \begin{macro}{ganttschedule}\marg{total cell count}\oarg{title}\AfterLastParam
 An environment for drawing Gantt charts indicating process scheduling. The
 mandatory argument indicates how small the grid should be; \texttt{19}
@@ -476,41 +483,53 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 \end{document}
 \end{latexcode}
 
-\pagebreak
 \begin{changelog}[author=Rebecca Turner]
+\shortversion{v=0.4.1, date=2019-01-03,
+	changes={Updated \env{scheme} environment to properly recognize all
+	primitive functions, added syntax coloring to all code.}}
 
-\begin{version}{v=0.4.0}
-	\added \env{solution} environment and \option{solutions} class
+\begin{version}[v=0.4.0, date=2018-12-20]
+\added
+	\item \env{solution} environment and \option{solutions} class
 		option.
-	\fixed Boolean class options being overwritten by keys defined for
-		\cs{problemsetsetup}
-	\removed Assignment- and course-specific class options
+	\item \env{scheme} shorthand environment and \option{scheme} class
+		option.
+\fixed
+	\item Boolean class options being overwritten by keys defined for
+		\cs{problemsetsetup}.
+	\item Title-formatting errors
+\removed
+	\item Assignment- and course-specific class options
 		\option{duedate}, \option{assignment}, \option{instructor},
 		and \option{course}. These settings should be configured
 		with either \cs{problemsetsetup} or their specific commands.
-		(\cs{duedate}, \cs{instructor}, etc.)
+		(\cs{duedate}, \cs{instructor}, etc.).
 \end{version}
 
-\begin{version}{v=0.3.0, date=2018-10-24}
-	\added changelog.
-	\added support for \cs{part}s and referencing problems.
-	\added options to \env{problem} environment: \option{part},
+\begin{version}[v=0.3.0, date=2018-10-24]
+\added
+	\item This changelog.
+	\item Support for \cs{part}s and referencing problems.
+	\item Options to \env{problem} environment: \option{part},
 		\option{label}, and \option{partlabel}.
-	\added \cs{maketitle} (contrast with \cs{maketitlepage}).
+	\item \cs{maketitle} (contrast with \cs{maketitlepage}).
 \end{version}
 
-\begin{version}{v=0.2.0, date=2018-10-20}
-	\item Renamed to \bps.
-	\added license header.
-	\added \env{ganttschedule} environment.
-	\added keywords to pseudocode environment: \texttt{and}, \texttt{or},
-		\texttt{nil}, and \texttt{len}.
-	\added \cs{ac} command for acronyms.
-	\added package example.
+\begin{version}[v=0.2.0, date=2018-10-20]
+\changed
+	\item Class renamed to from \ltxclass{problemset} to \bps.
+\added
+	\item A license header.
+	\item \env{ganttschedule} environment.
+	\item Additional keywords for \env{pseudocode} environment:
+		\texttt{and}, \texttt{or}, \texttt{nil}, and \texttt{len}.
+	\item \cs{ac} command for acronyms.
+	\item An example document.
 \end{version}
 
 \shortversion{v=0.1.0, date=2018-10-19,
 	changes=Initial beta as \ltxclass{problemset}.}
 \end{changelog}
 
+\pagebreak\PrintIndex\listoftables
 \end{document}
