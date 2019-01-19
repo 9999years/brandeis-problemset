@@ -1,4 +1,4 @@
-\ProvidesClass{brandeis-problemset}[2019-01-03 0.4.1 COSI Problem sets at Brandeis University]
+\ProvidesClass{brandeis-problemset}[2019/01/19 0.4.2 COSI Problem sets at Brandeis University]
 % Description: A document class for Brandeis University's computer science
 %              courses' problem sets
 % Homepage:    https://github.com/9999years/brandeis-problemset
