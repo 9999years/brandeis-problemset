@@ -1,27 +1,51 @@
-\documentclass{ltxdoc}
-\usepackage{brandeis-problemset-doc}
+\documentclass{ltxguidex}
+\usepackage{textcomp} % needed for listings
+\usepackage{hologo} % xetex, etc. logos
+\usepackage{changelog}
+\newcommand{\bps}{\ltxclass{brandeis-problemset}}
+\newcommand{\fontspecok}{\hologo{XeLaTeX} or \hologo{LuaTeX}}
+\newcommand{\cosi}[1]{\textsc{cosi}~#1}
+\newnotice{todo}{To-do}
+
+\usepackage{fontspec}
+\setmainfont{Tiempos Text}
+\usepackage{FiraSans}
+\usepackage{FiraMono}
+
+\lstnewenvironment{latexfile}[1]
+	{\lstset{
+		language=[LaTeX]TeX,
+		numbers=none,
+	}}
+	{}
+
 \author{Rebecca Turner\thanks{Brandeis University; \email{rebeccaturner@brandeis.edu}}}
 \title{The \bps\ Document Class}
-\date{2019-01-03}
+\date{2019/01/19}
 \begin{document}
 \maketitle
 \begin{abstract}
 
 	Brandeis University's computer science (``\textsc{cosi}'') courses
 	often assign ``problem sets'' which require fairly rigorous
-	formatting. The \bps\ document class, which extends
-	\ltxclass{article}, provides a simple way to typeset these problem
-	sets in \LaTeX.
+	formatting. The \ctan{brandeis-problemset} document class, which
+	extends \ltxclass{article}, provides a simple way to typeset these
+	problem sets in \LaTeX.
 
 	Although \bps\ is compatible with all \LaTeX\ flavors, \fontspecok\
 	is recommended for \ctan{fontspec} support.
 
 \end{abstract}
 
-\note{The \bps\ document class should be considered experimental; the only
-stable \textsc{api} is that of the \env{problem} environment.}
-\note{Browse the sources, contribute, or complain at \\
-	\https{github.com/9999years/brandeis-problemset}}
+\begin{note}
+	The \bps\ document class should be considered experimental; the only
+	stable \textsc{api} is that of the |problem| environment.
+\end{note}
+
+\begin{note}
+	Browse the sources, contribute, or complain at \\
+	\https{github.com/9999years/brandeis-problemset}
+\end{note}
 
 \tableofcontents
 \vfill
@@ -30,7 +54,7 @@ stable \textsc{api} is that of the \env{problem} environment.}
 \section{Default behavior}
 
 \bps\ provides packages and well-formatted constructs (notably the
-\env{problem} environment) for problem-set writers. \bps\ will always render
+|problem| environment) for problem-set writers. \bps\ will always render
 its body copy as a Times variant (\ctan{stix} for plain \LaTeX\ or
 \ctan{xits} with \fontspecok) and always contains a useful header (which
 contains the page number, author's name, course, instructor, and assignment
@@ -40,19 +64,19 @@ due date).
 
 \begin{enumerate}
 \item \ctan{hyperref}, for a nicely-linked table of contents;
-	\cs{href}|{url}{label}|.
+	|\href||{url}{label}|.
 \item \ctan{listings}, for verbatim code listings (including the
-	\env{assembly}, \env{java}, and \env{pseudocode} environments).
+	|assembly|, |java|, and |pseudocode| environments).
 \item \ctan{xcolor}, for gray line numbers in code listings (and perhaps
-	colored listings in the future); e.g.\ \cs{color}|{gray}|.
+	colored listings in the future); e.g.\ |\color||{gray}|.
 \item \ctan{enumitem} for better control over the margins and spacing of
-	the \env{enumerate}, \env{itemize}, and \env{description}
+	the |enumerate|, |itemize|, and |description|
 	environments.
 \item Math packages: \begin{enumerate}
 	\item \ctan{amsmath} for tons of useful math commands, including
-		\cs{text}, \cs{intertext}, and \cs{boxed} as well as the \env{bmatrix},
-		\env{multiline}, \env{gather}, \env{align}, and
-		\env{alignat} environments. See
+		|\text|, |\intertext|, and |\boxed| as well as the |bmatrix|,
+		|multiline|, |gather|, |align|, and
+		|alignat| environments. See
 		\href{http://texdoc.net/texmf-dist/doc/latex/amsmath/amsldoc.pdf}{``User's
 		Guide for the \package{amsmath} Package''} for a more
 		complete listing.
@@ -60,7 +84,7 @@ due date).
 \end{enumerate}
 \item Table packages: \begin{enumerate}
 	\item \ctan{multirow} for cells spanning multiple rows.
-	\item \ctan{booktabs} for good-by-default tables and the \cs{cline}
+	\item \ctan{booktabs} for good-by-default tables and the |\cline|
 		macro.
 	\item \ctan{tabu}, the best table package with dynamically resizable
 		columns, easy creation of new column types, and more.
@@ -73,77 +97,80 @@ due date).
 
 Class options are limited to configuration options which require the loading
 of fonts or other packages; ``string'' settings like the assignment's due
-date are configured either with the \cs{problemsetsetup} command or the
+date are configured either with the |\problemsetsetup| command or the
 commands described in section~\ref{sss:configcommands}.
 
-\begin{Optionlist}
-	gantt &  Load packages for the \env{ganttschedule} environment \\
-	scheme & Define the \texttt{scheme} language for the \ctan{listings}
-		package as well as the \env{scheme} shorthand environment. \\
-	antonella & Use Dr.\ Antonella DiLillio's preferred styles (Courier
-		for code) \\
-	solutions & Include \env{solution} environments in compiled
-		document. \\
-\end{Optionlist}
+\begin{keys}
+	\key{gantt} Load packages for the |ganttschedule| environment.
+	\key{scheme} Define the |scheme| language for the \ctan{listings}
+		package as well as the |scheme| shorthand environment.
+	\key{antonella} Use Dr.\ Antonella DiLillio's preferred styles (Courier
+		for code)
+	\key{solutions} Include |solution| environments in compiled
+		document.
+\end{keys}
 
 \subsection{Setting options after loading \bps}
 
-\begin{macro}{\problemsetsetup}\marg{options}\AfterLastParam Sets global
-\bps\ options; see table~\ref{tab:problemset-options} for a list of valid
-options.
+\begin{desc}
+|\problemsetsetup{<options>}|
+\end{desc}
+Sets global \bps\ options.
 
-\begin{table}[h]
-	\centering
-	\caption{Options for \cs{problemsetsetup}}
-	\label{tab:problemset-options}
-	\begin{Optionlist}
-	course & Course name in full. \\
-	coursenumber & Course name shorthand; use \texttt{21a} for
-		``\cosi{21a}''. \\
-	assignment & Assignment name in full. \\
-	number & Assignment name shorthand; use \texttt{3} for ``Problem Set
-		3''. \\
-	duedate & Due date, e.g.\ \texttt{2018-10-18}; not parsed at all,
-		but
-		\href{https://en.wikipedia.org/wiki/ISO_8601}{\textsc{iso}
-		8601 dates} are highly recommended. \\
-	instructor & Course instructor. \\
-	codefont & With \fontspecok, pass the given font to \cs{setmonofont}
-		and enable Unicode shortcuts for the \env{pseudocode}
-		environment. (If you need to specify options to
-		\cs{setmonofont}, use \cs{setcodefont}.) \\
-	gantt & Load packages for the \env{ganttschedule} environment \\
-	antonella & True/false (default: false; if no value specified,
-		assumes true); use Dr.\ Antonella DiLillio's preferred
-		styles (Courier for code) \\
-	solutions & Include \env{solution} environments in compiled
-		document. \\
-	\end{Optionlist}
-\end{table}
-\end{macro}
+\begin{keys}
+\key{course}[\m{course name}]
+	Course name in full.
+\key{coursenumber}[\m{course number}]
+	Course name shorthand; use \texttt{21a} for ``\cosi{21a}''.
+\key{assignment}[\m{assignment name}]
+	Assignment name in full.
+\key{number}[\m{problem set number}]
+	Assignment name shorthand; use \texttt{3} for ``Problem Set 3''.
+\key{duedate}[\m{due date}]
+	Due date, e.g.\ \texttt{2018-10-18}; not parsed at all, but
+	\href{https://en.wikipedia.org/wiki/ISO_8601}{\textsc{iso} 8601
+	dates} are highly recommended.
+\key{instructor}[\m{course instructor}]
+	Course instructor.
+\key{author}[\m{your name}]
+	Alternate interface for the |\author| command.
+\key{date}[\m{document date}]
+	Alternate interface for the |\date| command.
+\key{codefont}[\m{fontspec font name}]
+	With \fontspecok, pass the given font to |\setmonofont| and enable
+	Unicode shortcuts for the |pseudocode| environment. (If you need to
+	specify options to |\setmonofont|, use |\setcodefont|.)
+\key{gantt}[\bool][false]
+	Load packages for the |ganttschedule| environment.
+\key{antonella}[\bool][false]
+	Use Dr.\ Antonella DiLillio's preferred styles (Courier for code)
+\key{solutions}[\bool][false]
+	Include |solution| environments in compiled document.
+\end{keys}
 
 \subsubsection{Configuration commands}%
 \label{sss:configcommands}
 
 \bps\ additionally provides a number of configuration commands for setting a
-single opption with similar interfaces as the \TeX\ macros \cs{author},
-\cs{title}, and \cs{date}.
+single opption with similar interfaces as the \TeX\ macros |\author|,
+|\title|, and |\date|.
 
-\begin{macro}{\duedate}\marg{date} sets the due date in full.\end{macro}
-\begin{macro}{\instructor}\marg{name} sets the instructor name.\end{macro}
-\begin{macro}{\course}\marg{name} sets the course name in full.\end{macro}
-\begin{macro}{\coursenumber}\marg{number} sets the course name by number; e.g.
-	|\coursenumber{21a}| gives a course of ``\cosi{21a}''.\end{macro}
-\begin{macro}{\assignment}\marg{name} sets the assignment name in full.\end{macro}
-\begin{macro}{\problemsetnumber}\marg{number} sets the assignment name by
-	number; e.g. |\problemsetnumber{3}| gives an assignment of ``Problem
-	Set 3''.\end{macro}
+\begin{desc}|\duedate{<date>}|\end{desc} Sets the due date in full.
+\begin{desc}|\instructor{<name>}|\end{desc} Sets the instructor name.
+\begin{desc}|\course{<name>}|\end{desc} Sets the course name in full.
+\begin{desc}|\coursenumber{<number>}|\end{desc} Sets the course name by
+	number; e.g. |\coursenumber{21a}| gives a course of ``\cosi{21a}''.
+\begin{desc}|\assignment{<name>}|\end{desc} Sets the assignment name in
+	full.
+\begin{desc}|\problemsetnumber{<number>}|\end{desc} Sets the assignment name
+	by number; e.g. |\problemsetnumber{3}| gives an assignment of
+	``Problem Set 3''.
 
-\begin{macro}{\setcodefont}\oarg{fontspec options}\marg{font
-name}\AfterLastParam Sets the monospaced font to \meta{font name} and uses
-it for shortcuts in the \env{pseudocode} environment.
-
-\end{macro}
+\begin{desc}
+|\setcodefont[<fontspec options>]{<fontspec font name>}|
+\end{desc}
+Sets the monospaced font to \meta{font name} and uses it for shortcuts in
+the |pseudocode| environment.
 
 \subsection{Practical usage}
 
@@ -162,8 +189,8 @@ files. For instance, \filename{cosi21a.cls} might read:
 }
 \author{Rebecca Turner}
 
-% get a prettier code font -- these can be pretty big so they're not loaded
-% by default
+% get a prettier code font -- these can be pretty big so they're not
+% loaded by default
 \setcodefont[
   Extension = .otf,
   UprightFont = *-Regular,
@@ -189,87 +216,107 @@ See section~\ref{sec:example} for a more complete example.
 
 \bps\ provides a number of commands for typesetting problems.
 
-\begin{macro}{problem}\oarg{options}\AfterLastParam Defines a problem. A
-problem is set 1~inch from the left margin (although this amount may be
-customized by modifying the \cs{problemindent} length) and begins a new
-page.
+\begin{desc}
+|\begin{problem}[<options>]...\end{problem}|
+\end{desc}
+Defines a problem. A problem is set 1~inch from the left margin (although
+this amount may be customized by modifying the |\problemindent| length) and
+begins a new page. |<options>| may include:
+\begin{keys}
+\key{title}[\m{problem title}]
+	Displayed after ``Problem'' and the problem's number.
+\key{number}[\m{problem number}]
+	If given, the problem-number counter will not advance. The number
+	must be robust, because it goes inside a |\section|.
+\key{pagebreak}[\bool][true]
+	Add a pagebreak before the problem?
+\key{label}[\m{problem label}]
+	Adds a custom label to the problem with |\label| that can be used
+	with |\ref|. I recommend prefixing your problem labels with |p:| as
+	in |p:big-o-proofs|.
+\key{part}[\m{part name}]
+	Indicates that this problem starts a new ``part'' of the assignment;
+	actually calls |\part| under the hood.
+\key{partlabel}[\m{part label}]
+	Adds a custom label to this part in the same fashion as the
+	\option{label} key.
+\end{keys}
 
-\begin{Optionlist}
-title & A problem title, to be displayed after ``Problem'' and the problem's
-	number.\\
-number & A problem number; if given, the problem-number counter
-	will not advance. The number must be robust, because it goes inside
-	a \cs{section}. \\
-pagebreak & True/false (default: true). Add a pagebreak before the problem? \\
-label & Adds a custom label to the problem with \cs{label} that can be used
-	with \cs{ref} \\
-part & Indicates that this problem starts a new ``part'' of the assignment
-	\\
-partlabel & Adds a custom label to this part; see \option{label} \\
-\end{Optionlist}
+Vertical material is allowed in a~|problem|.
 
-Vertical material is allowed in a~\env{problem}.
-\end{macro}
-
-\begin{macro}{solution}
+\begin{desc}
+|\begin{solution}...\end{solution}|
+\end{desc}
 
 Defines a solution for a problem; a solution prints in blue and is excluded
 from the compiled document entirely unless the \option{solutions} package
 option is given.
 
-In this way, the same \texttt{.tex} file can serve as both a postable assignment
-prompt and an answer key.
+In this way, the same \extension{tex} file can serve as both a postable
+assignment prompt and an answer key.
 
-\note{The style of solutions is customizable by redefining
-	\cs{solutionstyle}; it's defined to \cs{color}|{blue}| by default.}
+\begin{note}
+	The style of solutions is customizable by redefining
+	|\solutionstyle|; it's defined to |\color{blue}| by default.
+\end{note}
 
-\end{macro}
+\begin{desc}
+|\subproblem[<problem description>]|
+\end{desc}
+Prints a sub-problem, i.e.\ a |\subsection|. It doesn't do very much at the
+moment.
 
-\begin{macro}{\subproblem}\oarg{description}\AfterLastParam Prints a sub-problem, i.e.\ a
-\cs{subsection}. It doesn't do very much at the moment.
-\end{macro}
+\begin{desc}
+|\Th[<column spec>]{<header text>}|
+\end{desc}
 
-\begin{macro}{\Th}\oarg{colspec}\marg{header}\AfterLastParam Prints a table-header in bold.
-By default, the header is left-aligned, but arbitrary alignments can be
-specified with \meta{colspec}. \cs{Th} is backed by \cs{multicolumn}.
-\end{macro}
+Typesets a table header in bold-face. |<column spec>| defaults to |l|.
+Useful for when a column is wrapped in a math environment.
 
-\begin{macro}{pseudocode}\oarg{keywords}\AfterLastParam Prints
-pseudocode.\footnote{Designed for \cosi{21a} as taught by Dr.\ Antonella
-DiLillo}
+\begin{desc}
+|\begin{pseudocode}[<keywords>]...\end{pseudocode}|
+\end{desc}
+Prints pseudocode.\footnote{Designed for \cosi{21a} as taught by Dr.\
+Antonella DiLillo}
 
 Several ``shortcuts,'' which replace a source-code sequence like
 \texttt{->} with a symbol like $\rightarrow$, are shown in
 table~\ref{tab:pseudocode}.
 
-These shortcuts display in \cs{pseudocodesymbolfont} (default:
-\cs{ttfamily}), which may be redefined if you prefer something else. The
-easiest way to change \cs{pseudocodesymbolfont} is with \cs{setcodefont}. If
+These shortcuts display in |\pseudocodesymbolfont| (default:
+|\ttfamily|), which may be redefined if you prefer something else. The
+easiest way to change |\pseudocodesymbolfont| is with |\setcodefont|. If
 you use the \option{antonella} option with \fontspecok, \bps\ will load
 \ctan{lm-math} and display the symbols seen in table~\ref{tab:pseudocode},
-which look significantly better with Courier than \textsc{stix}' symbols.
+which look significantly better with Courier than \ctan{stix}' symbols.
 
 \begin{table}[h]
 	\centering
-	\caption{Shortcuts provided by the \env{pseudocode} environment}
+	\caption{Shortcuts provided by the \texttt{pseudocode}
+	environment}%
 	\label{tab:pseudocode}
-	\begin{tabular}{>{\ttfamily}lll}
-	\Th{Input} & \Th{Display} & \Th{Codepoint} \\
-	<-         & ←            & U+2190 \\
-	->         & →            & U+2192 \\
-	(/)        & $\emptyset$  & U+2205 \\
-	inf        & $\infty$     & U+221E \\
-	!=         & $\ne$        & U+2260 \\
-	>=         & $\ge$        & U+2265 \\
-	<=         & $\le$        & U+2264 \\
+	\begin{tabular}{lll}
+	\Th{Input}    & \Th{Display}  & \Th{Codepoint} \\
+	\ttfamily <-  & $\leftarrow$  & U+2190 \\
+	\ttfamily ->  & $\rightarrow$ & U+2192 \\
+	\ttfamily (/) & $\emptyset$   & U+2205 \\
+	\ttfamily inf & $\infty$      & U+221E \\
+	\ttfamily !=  & $\ne$         & U+2260 \\
+	\ttfamily >=  & $\ge$         & U+2265 \\
+	\ttfamily <=  & $\le$         & U+2264 \\
 	\end{tabular}
 \end{table}
 
-\todo{Improve the font selection mechanism; maybe provide a command for each
-	symbol?}
-\note{If your \TeX\ engine doesn't support \textsc{utf}-8 input, the
-	shortcuts might appear totally blank or garbled. Good luck! It will surely
-	work with \fontspecok.}
+\begin{todo}
+	Improve the font selection mechanism; maybe provide a command for
+	each symbol?
+\end{todo}
+
+\begin{todo}
+	If your \TeX\ engine doesn't support \textsc{utf}-8 input, the
+	shortcuts might appear totally blank or garbled. Good luck! It will
+	surely work with \fontspecok.
+\end{todo}
 
 \begin{latexcode}
 % the optional [Bar] makes [Bar] bold like the other keywords
@@ -290,17 +337,18 @@ Bar(a, n)
     return b
 \end{pseudocode}
 \end{latexcode}
-\end{macro}
 
-\begin{macro}{assembly}\oarg{extra options}\AfterLastParam typesets assembly
-code.\footnote{Designed for \cosi{131a} as taught by Dr.\ Liuba Shrira}
-Several considerations are taken into account; most notably, line numbers
-are printed as \texttt{x + n}, where $n$ starts at 0 and counts by 4; the
-line number actually indicates the instruction's location in memory as an
-offset from the program start. Additionally, all valid instructions are
-treated as keywords and styled appropriately.
+\begin{desc}
+|\begin{assembly}[<listings options>]...\end{assembly}|
+\end{desc}
+Typesets assembly code.\footnote{Designed for \cosi{131a} as taught by Dr.\
+Liuba Shrira} Several considerations are taken into account; most notably,
+line numbers are printed as \texttt{x + n}, where $n$ starts at 0 and counts
+by 4; the line number actually indicates the instruction's location in
+memory as an offset from the program start. Additionally, all valid
+instructions are treated as keywords and styled appropriately.
 
-Any extra options are passed directly to the \ctan{listings} package.
+|<listings options>| is passed directly to the \ctan{listings} package.
 
 \begin{latexcode}
 \begin{assembly}
@@ -319,57 +367,45 @@ OUTER:  BLT   R3, R2, INNER  ; while j < i goto inner
         HALT
 \end{assembly}
 \end{latexcode}
-\end{macro}
 
-\begin{macro}{java}\oarg{extra options}\AfterLastParam Tragically-common
-shorthand environment for a listing of Java code.
+\begin{desc}
+|\begin{java}[<listings options>]...\end{java}|
+\end{desc}
+Tragically-common shorthand environment for a listing of Java code.
 
-Any extra options are passed directly to the \ctan{listings} package.
-\end{macro}
+|<listings options>| is passed directly to the \ctan{listings} package.
 
-\begin{macro}{scheme}\oarg{extra options}\AfterLastParam Shorthand
-environment for a listing of Scheme code, useful for \cosi{121b}. Requires
-the \option{scheme} package option to be loaded.
+\begin{desc}
+|\begin{scheme}[<listings options>]...\end{scheme}|
+\end{desc}
+Shorthand environment for a listing of Scheme code, useful for \cosi{121b}.
+Requires the \option{scheme} package option to be loaded.
 
-Any extra options are passed directly to the \ctan{listings} package.
-\end{macro}
+|<listings options>| is passed directly to the \ctan{listings} package.
 
-\begin{macro}{ganttschedule}\marg{total cell count}\oarg{title}\AfterLastParam
+\begin{desc}
+|\begin{ganttschedule}[<total cell count>]...\end{ganttschedule}|
+\end{desc}
 An environment for drawing Gantt charts indicating process scheduling. The
 mandatory argument indicates how small the grid should be; \texttt{19}
 subdivides the line into 19 cells.
 
-To use the \env{ganttschedule} environment, make sure to use the
+To use the |ganttschedule| environment, make sure to use the
 \option{gantt} package option.
 
-Within a \env{ganttschedule}, use the \cs{burst} command to indicate an
+Within a |ganttschedule|, use the |\burst| command to indicate an
 active process (i.e.\ a process burst).
 
-\begin{macro}{\burst}\marg{pid}\marg{burst length}\AfterLastParam
-Draw a burst for process \marg{pid} of time length \meta{burst length}.
-\end{macro}
+\begin{note}
+	The charts |ganttschedule| draws aren't actually really proper Gantt
+	charts, which can indicate parallel activities; however, that's what
+	Liuba calls them, so that's what they're called here.
+\end{note}
 
-\note{These aren't really Gantt charts, but that's what Dr.\ Shrira calls
-	them, so that's what they're called here.}
-\cprotect\note{Because \env{ganttschedule} relies on \ctan{tikz}, \ctan{fp},
-	and \ctan{calc}, it can add significantly to document compile times. If
-	you intend to use the \env{ganttschedule} environment, make sure to use
-	the \option{gantt} class option or set \option{gantt} in
-	\cs{problemsetsetup}. If you fail to include the \option{gantt} option,
-	you will see an error message:
-
-\begin{latexcode}
-! Package brandeis-problemset Error: ganttschedule enviornment not loaded in preamble.
-
-See the brandeis-problemset package documentation for explanation.
-Type  H <return>  for immediate help.
-l.4 \burst
-          {1}{1}
-? H
-Did you mean to use the 'gantt' option for the brandeis-problemset document class?
-
-\end{latexcode}
-}
+\begin{desc}
+|\pid{<pid>}{<burst length>}|
+\end{desc}
+Draw a burst for process |<pid>| of time length |<burst length>|.
 
 \begin{latexcode}
 \begin{ganttschedule}{19}
@@ -380,31 +416,52 @@ Did you mean to use the 'gantt' option for the brandeis-problemset document clas
 	\burst{1}{10}
 \end{ganttschedule}
 \end{latexcode}
-\end{macro}
+
+\begin{note}
+	Because |ganttschedule| relies on \ctan{tikz}, \ctan{fp}, and
+	\ctan{calc}, it can add significantly to document compile times. If
+	you intend to use the |ganttschedule| environment, make sure to use
+	the \option{gantt} class option or set \option{gantt} in
+	|\problemsetsetup|. If you fail to include the \option{gantt}
+	option, you will see an error message:
+
+\begin{latexcode}
+! Package brandeis-problemset Error: ganttschedule enviornment not loaded in preamble.
+
+See the brandeis-problemset package documentation for explanation.
+Type  H <return>  for immediate help.
+l.4 \burst
+	{1}{1}
+? H
+Did you mean to use the 'gantt' option for the brandeis-problemset document class?
+
+\end{latexcode}
+\end{note}
 
 \subsection{General formatting commands}
 
-\begin{macro}{\ac}\marg{acronym}\AfterLastParam
-Typesets an acronym. The \meta{acronym} should be lowercase (e.g.\
-\cs{ac}|{cpu}| rather than \cs{ac}|{CPU}|). Currently, \cs{ac} simply
-delegates to \cs{textsc}. In the future, I'd like to support a bit of
-letterspacing; ``for abbreviations and acronyms in the midst of normal text,
-use spaced small caps.''\footnote{\textit{The Elements of Typographic Style} by
-Robert Bringhurst, 2nd.\ ed, \S\ 3.2.2}
-\end{macro}
+\begin{desc}
+|\ac{<acronym>}|
+\end{desc}
+Typesets an acronym. The |<acronym>| should be lowercase (e.g.\ |\ac{cpu}|
+rather than |\ac{CPU}|). Currently, |\ac| simply delegates to |\textsc|. In
+the future, I'd like to support a bit of letterspacing; ``for abbreviations
+and acronyms in the midst of normal text, use spaced small
+caps.''\footnote{\textit{The Elements of Typographic Style} by Robert
+Bringhurst, 2nd.\ ed, \S\ 3.2.2}
 
-\begin{macro}{\Sc}\marg{text}\AfterLastParam
-An abbreviation for \cs{textsc}\end{macro}
-\begin{macro}{\Rm}\marg{text}\AfterLastParam
-An abbreviation for \cs{textrm}\end{macro}
-\begin{macro}{\Up}\marg{text}\AfterLastParam
-An abbreviation for \cs{textup}\end{macro}
-\begin{macro}{\Bf}\marg{text}\AfterLastParam
-An abbreviation for \cs{textbf}\end{macro}
-\begin{macro}{\It}\marg{text}\AfterLastParam
-An abbreviation for \cs{textit}\end{macro}
-\begin{macro}{\Tt}\marg{text}\AfterLastParam
-An abbreviation for \cs{texttt}\end{macro}
+\begin{desc}|\Sc{<text>}|\end{desc}
+An abbreviation for |\textsc|.
+\begin{desc}|\Rm{<text>}|\end{desc}
+An abbreviation for |\textrm|.
+\begin{desc}|\Up{<text>}|\end{desc}
+An abbreviation for |\textup|.
+\begin{desc}|\Bf{<text>}|\end{desc}
+An abbreviation for |\textbf|.
+\begin{desc}|\It{<text>}|\end{desc}
+An abbreviation for |\textit|.
+\begin{desc}|\Tt{<text>}|\end{desc}
+An abbreviation for |\texttt|.
 
 \section{Example}\label{sec:example}
 
@@ -484,35 +541,49 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 \end{latexcode}
 
 \begin{changelog}[author=Rebecca Turner]
+\begin{version}[v=0.4.2, date=2019-01-19]
+\added
+	\item |author| and |date| keys added to |\problemsetsetup| to
+	simplify class-wide configuration.
+\fixed
+	\item Fixed definitions for |\duedate|, |\instructor|, etc.\ to
+	avoid spurious errors due to undefined commands.
+\changed
+	\item Translated documentation to the new \ctan{ltxguidex} document
+	class for added beauty.
+	\item Re-licensed \bps\ to the \textsc{lppl} v1.3c for easy transfer of
+	maintenence in the future.
+\end{version}
+
 \shortversion{v=0.4.1, date=2019-01-03,
-	changes={Updated \env{scheme} environment to properly recognize all
+	changes={Updated |scheme| environment to properly recognize all
 	primitive functions, added syntax coloring to all code.}}
 
 \begin{version}[v=0.4.0, date=2018-12-20]
 \added
-	\item \env{solution} environment and \option{solutions} class
+	\item |solution| environment and \option{solutions} class
 		option.
-	\item \env{scheme} shorthand environment and \option{scheme} class
+	\item |scheme| shorthand environment and \option{scheme} class
 		option.
 \fixed
 	\item Boolean class options being overwritten by keys defined for
-		\cs{problemsetsetup}.
+		|\problemsetsetup|.
 	\item Title-formatting errors
 \removed
 	\item Assignment- and course-specific class options
 		\option{duedate}, \option{assignment}, \option{instructor},
 		and \option{course}. These settings should be configured
-		with either \cs{problemsetsetup} or their specific commands.
-		(\cs{duedate}, \cs{instructor}, etc.).
+		with either |\problemsetsetup| or their specific commands.
+		(|\duedate|, |\instructor|, etc.).
 \end{version}
 
 \begin{version}[v=0.3.0, date=2018-10-24]
 \added
 	\item This changelog.
-	\item Support for \cs{part}s and referencing problems.
-	\item Options to \env{problem} environment: \option{part},
+	\item Support for |\part|s and referencing problems.
+	\item Options to |problem| environment: \option{part},
 		\option{label}, and \option{partlabel}.
-	\item \cs{maketitle} (contrast with \cs{maketitlepage}).
+	\item |\maketitle| (contrast with |\maketitlepage|).
 \end{version}
 
 \begin{version}[v=0.2.0, date=2018-10-20]
@@ -520,16 +591,14 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 	\item Class renamed to from \ltxclass{problemset} to \bps.
 \added
 	\item A license header.
-	\item \env{ganttschedule} environment.
-	\item Additional keywords for \env{pseudocode} environment:
+	\item |ganttschedule| environment.
+	\item Additional keywords for |pseudocode| environment:
 		\texttt{and}, \texttt{or}, \texttt{nil}, and \texttt{len}.
-	\item \cs{ac} command for acronyms.
+	\item |\ac| command for acronyms.
 	\item An example document.
 \end{version}
 
 \shortversion{v=0.1.0, date=2018-10-19,
 	changes=Initial beta as \ltxclass{problemset}.}
 \end{changelog}
-
-\pagebreak\PrintIndex\listoftables
 \end{document}

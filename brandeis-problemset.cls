@@ -1,10 +1,23 @@
-\ProvidesClass{brandeis-problemset}[2019-01-03 0.4.1 COSI Problem sets at Brandeis University]
+\ProvidesClass{brandeis-problemset}[2019/01/19 0.4.2 COSI Problem sets at Brandeis University]
 % Description: A document class for Brandeis University's computer science
 %              courses' problem sets
-% License:     GPL-3.0
 % Homepage:    https://github.com/9999years/brandeis-problemset
 %              https://ctan.org/pkg/brandeis-problemset
 % Maintainer:  Rebecca Turner <rebeccaturner@brandeis.edu>
+%
+% Copyright 2019 Rebecca Turner
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Rebecca Turner.
 
 \errorcontextlines 10
 
@@ -229,12 +242,12 @@
 \newcommand{\problemset@course}{\relax}
 \newcommand{\problemset@assignment}{\relax}
 % config commands
-\newcommand{\duedate}[1]         {\renewcommand{\problemset@duedate}{#1}}
-\newcommand{\instructor}[1]      {\renewcommand{\problemset@instructor}{#1}}
-\newcommand{\course}[1]          {\renewcommand{\problemset@course}{#1}}
-\newcommand{\coursenumber}[1]    {\renewcommand{\problemset@course}{\Sc{cosi} #1}}
-\newcommand{\assignment}[1]      {\renewcommand{\problemset@assignment}{#1}}
-\newcommand{\problemsetnumber}[1]{\renewcommand{\problemset@assignment}{Problem Set #1}}
+\newcommand{\duedate}[1]         {\def\problemset@duedate{#1}}
+\newcommand{\instructor}[1]      {\def\problemset@instructor{#1}}
+\newcommand{\course}[1]          {\def\problemset@course{#1}}
+\newcommand{\coursenumber}[1]    {\def\problemset@course{\Sc{cosi} #1}}
+\newcommand{\assignment}[1]      {\def\problemset@assignment{#1}}
+\newcommand{\problemsetnumber}[1]{\def\problemset@assignment{Problem Set #1}}
 \newcommand{\setcodefont}[2][]{%
 	% don't fail if fontspec isn't loaded
 	\ifx\setmonofont\undefined\else
@@ -246,6 +259,8 @@
 \define@cmdkeys{problemset}[problemset@]{duedate, instructor, course, assignment}
 \define@key{problemset}{number}{\problemsetnumber{#1}}
 \define@key{problemset}{coursenumber}{\coursenumber{#1}}
+\define@key{problemset}{author}{\author{#1}}
+\define@key{problemset}{date}{\date{#1}}
 \define@key{problemset}{codefont}{%
 	\setcodefont{#1}
 }
