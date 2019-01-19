@@ -10,9 +10,7 @@ File                        | Description
 brandeis-problemset.cls     | The brandeis-problemset document class
 brandeis-problemset.pdf     | Documentation (English)
 brandeis-problemset.tex     | Documentation source
-brandeis-problemset-doc.sty | Documentation styles
+example.tex                 | Example problem set
+example.pdf                 | Example problem set
 README.md                   | This file
-
-## License
-
-GNU GPLv3; see `LICENSE.md`
+LICENSE.txt                 | LPPL v1.3c
