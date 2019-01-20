@@ -1,6 +1,14 @@
 PACKAGE := brandeis-problemset
 DIST_FILES := ${PACKAGE}.cls ${PACKAGE}.tex ${PACKAGE}.pdf \
-	README.md example.tex example.pdf LICENSE.txt
+	example.tex example.pdf LICENSE.txt README.md
+
+# Simple OS detection for Make on Cygwin...
+UNAME := $(shell uname -o)
+ifeq ($(UNAME), Cygwin)
+	# use the windows home folder rather than the cygwin one
+	HOME := $(shell cygpath ${USERPROFILE})
+endif
+
 TEXMF_ROOT := ${HOME}/texmf
 INSTALL_DIR := $(TEXMF_ROOT)/tex/latex/${PACKAGE}
 LATEXMK = latexmk -aux-directory=extra -pdf -r ./.latexmkrc -pvc- -pv-

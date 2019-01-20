@@ -13,4 +13,4 @@ brandeis-problemset.tex     | Documentation source
 example.tex                 | Example problem set
 example.pdf                 | Example problem set
 README.md                   | This file
-LICENSE.txt                 | LPPL v1.3c
+LICENSE.txt                 | LPPL 1.3c
