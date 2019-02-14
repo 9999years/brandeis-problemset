@@ -1,4 +1,4 @@
-\ProvidesClass{brandeis-problemset}[2019/01/19 0.4.2 COSI Problem sets at Brandeis University]
+\ProvidesClass{brandeis-problemset}[2019/02/14 0.4.4 COSI Problem sets at Brandeis University]
 % Description: A document class for Brandeis University's computer science
 %              courses' problem sets
 % Homepage:    https://github.com/9999years/brandeis-problemset
@@ -67,10 +67,6 @@
 \RequirePackage{titlesec}
 \RequirePackage{titletoc}
 
-% math
-\RequirePackage{amsmath}
-\RequirePackage{mathtools}
-
 % tables
 \RequirePackage{multirow}
 \RequirePackage{booktabs}
@@ -95,23 +91,41 @@
 \let\pseudocodesymbolfont\ttfamily
 
 % fonts
+% NOTE: The order these packages are loaded in is very important.
+% - unicode-math overwrites a bunch of commands, so should be loaded after
+%   amsmath and others
+% - amsmath should be loaded after stix2 (not sure why, but the stix2
+%   documentation specifies this) -- however, if we can use fontspec, we
+%   just load the stix2 fonts without the stix2 package itself, so we load
+%   amsmath before unicode-math (and the stix2 fonts)
 \iffontspec@ok
+	\RequirePackage{amsmath}[2013/01/14]
+	% unicode-math makes equations copy/pastable in pdf output
 	\RequirePackage{unicode-math}
-
 	\setmainfont[
 		Extension      = .otf,
-		UprightFont    = *-regular,
-		BoldFont       = *-bold,
-		ItalicFont     = *-italic,
-		BoldItalicFont = *-bolditalic,
-	]{texgyretermes}
-
-	\setmathfont{XITSMath-Regular.otf}
-	\setmathfont{XITSMath-Bold.otf}[range={bfup->up,bfit->it}]
+		UprightFont    = *-Regular,
+		BoldFont       = *-Bold,
+		ItalicFont     = *-Italic,
+		BoldItalicFont = *-BoldItalic,
+	]{STIX2Text}
+	\setmathfont[
+		Extension = .otf,
+		StylisticSet={
+			1, % better caligraphic forms
+			8, % upright integrals
+		},
+	]{STIX2Math}
 \else
-	\RequirePackage{tgtermes}
-	\RequirePackage{stix}
+	\RequirePackage[upint]{stix2}
+	\RequirePackage{amsmath}[2013/01/14]
 \fi
+
+% math
+\RequirePackage{mathtools}
+
+% for whatever reason, redefining this here has no effect
+\AtBeginDocument{\renewcommand{\Re}{\mathbb{R}}}
 
 \ifproblemset@scheme
 	% Language definition by Rebecca Turner and Andreas Stuhlmüller.
