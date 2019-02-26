@@ -1,4 +1,12 @@
-\documentclass[gantt, scheme]{brandeis-problemset}
+\documentclass[
+	gantt,
+	scheme,
+	assembly,
+	math,
+	pseudocode,
+	tabu
+]{brandeis-problemset}
+\errorcontextlines 10
 \author{Rebecca Turner}
 \problemsetsetup{
 	coursenumber=21a,
@@ -9,7 +17,6 @@
 \newcommand{\io}{\ac{io}}
 \newcommand{\cpu}{\ac{cpu}}
 \begin{document}
-
 \maketitle
 
 \Bf{Note:} This example document is provided for illustrative purposes. The
@@ -104,7 +111,8 @@ LOOP:   STORE R2, @R1       ; *A = i
 
 An example equation which defines $e$:
 \begin{equation}
-	\exists! e \in \Re \left(\int_1^e \frac{1}{t} dt = 1\right).
+	\exists! e \in \Re \text{ such that }
+	\int_1^e \frac{1}{t} dt = 1.
 \end{equation}
 
 The definition of the Mandelbrot set:

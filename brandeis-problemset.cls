@@ -80,6 +80,8 @@
 	warnings-off={mathtools-colon,mathtools-overbracket}
 }{unicode-math}
 
+\RequirePackage{brandeis-problemset}
+
 % tables
 \ifbps@tabu
 	\RequirePackage{multirow}
@@ -94,8 +96,6 @@
 \RequirePackage{xcolor}
 \RequirePackage{enumitem}
 \RequirePackage{titletoc}
-
-\RequirePackage{brandeis-problemset}
 
 % utility
 \RequirePackage{hyperref}

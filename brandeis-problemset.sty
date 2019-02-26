@@ -194,10 +194,12 @@
 				\ProvideDocumentCommand{\pseudocodeemptyset}  {}{\pseudocodesymbolfont ∅}
 				\ProvideDocumentCommand{\pseudocodene}        {}{\pseudocodesymbolfont ≠}
 				\ProvideDocumentCommand{\pseudocodeinfty}     {}{\pseudocodesymbolfont ∞}
-				\@ifundefined{lmmath}{}{%
+				\@ifundefined{lmmath}{%
 					\newfontface{\lmmath}{latinmodern-math.otf}%
+				}{}%
+				\@ifundefined{lmmath}{}{%
+					\let\pseudocodesymbolfont\lmmath
 				}%
-				\let\pseudocodesymbolfont\lmmath
 			\else
 				% use math-mode fallbacks
 				\ProvideDocumentCommand{\pseudocodeleftarrow} {}{\ensuremath{\leftarrow}}
@@ -306,10 +308,10 @@
 \bps@problemkeys{subproblem}{false}
 \define@cmdkeys{problem}{partlabel}
 \define@cmdkey{problem}{part}[]{%
-		\part{\cmdKV@problem@part}%
-		\@ifundefined{cmdKV@problem@partlabel}{}{%
-			\expandafter\label{\cmdKV@problem@partlabel}%
-		}%
+	\part{\cmdKV@problem@part}%
+	\@ifundefined{cmdKV@problem@partlabel}{}{%
+		\expandafter\label{\cmdKV@problem@partlabel}%
+	}%
 }
 
 % common code for subproblem and problem envs
@@ -332,11 +334,14 @@
 	\renewcommand{\@seccntformat}[1]{}%
 	\typeout{\@currentlabelname}
 	% make the section (#3 is \section or something)
+	% NOTE: If you use \@currentlabelname for the title, the document
+	% will pause on compilation on this line; I don't know why this is,
+	% but it goes away if hyperref isn't loaded. Either way, defining an
+	% alternate command for the title works here.
 	#3{\bps@problem@title@}%
-	%#3{Problem \@currentlabel\csname #1@title\endcsname}%
 	% fix up ref commands
 	\@ifundefined{cmdKV@#1@label}{}{%
-		\expandafter\label{\cmdKV@#1@label}%
+		\expandafter\label{\csname cmdKV@#1@label\endcsname}%
 	}%
 }
 
