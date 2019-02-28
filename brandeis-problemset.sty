@@ -1,14 +1,9 @@
-\ProvidesPackage{brandeis-problemset}[2019/02/25 0.1.0 Commands for COSI
+\ProvidesPackage{brandeis-problemset}[2019/02/26 0.1.0 Commands for COSI
 	problem sets at Brandeis University]
 
 % utility
 \RequirePackage{xparse}
 \RequirePackage{xkeyval}
-
-% initializes complementary #1 and no#1 options
-\ProvideDocumentCommand{\bps@comploption}{O{false} m}{%
-	\DeclareBoolOption[#1]{#2}%
-	\DeclareComplementaryOption{no#2}{#2}}
 
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{
@@ -16,7 +11,12 @@
 	prefix=bps@,
 }
 
-\bps@comploption{scheme} % scheme code support
+% initializes complementary #1 and no#1 options
+\NewDocumentCommand{\bps@comploption}{O{false} m}{%
+	\DeclareBoolOption[#1]{#2}%
+	\DeclareComplementaryOption{no#2}{#2}}
+
+\bps@comploption{scheme}
 \bps@comploption{pseudocode}
 \bps@comploption{assembly}
 \bps@comploption{gantt}

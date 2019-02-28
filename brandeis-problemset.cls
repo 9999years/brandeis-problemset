@@ -1,4 +1,4 @@
-\ProvidesClass{brandeis-problemset}[2019/02/14 0.4.4 COSI problem sets at
+\ProvidesClass{brandeis-problemset}[2019/02/26 0.4.4 COSI problem sets at
 	Brandeis University]
 % Description: A document class for Brandeis University's computer science
 %              courses' problem sets
@@ -21,18 +21,17 @@
 % The Current Maintainer of this work is Rebecca Turner.
 
 \RequirePackage{xparse}
+\RequirePackage{xkeyval}
 \RequirePackage{kvoptions}
 
-\PassOptionsToClass{12pt}{article}
-\PassOptionsToPackage{
-	maketitle,
-	header,
-	listings,
-}{brandeis-problemset}
+\SetupKeyvalOptions{
+	family=bps,
+	prefix=bps@,
+}
 
 % passes an option to rebeccastyle
 \newcommand{\bps@passoption}[1]
-	{\DeclareOption{#1}{%
+	{\DeclareVoidOption{#1}{%
 		\PassOptionsToPackage{\CurrentOption}{brandeis-problemset}%
 	}}
 
@@ -40,47 +39,35 @@
 \NewDocumentCommand{\bps@passoptions}{>{\SplitList{,}} m}
 	{\ProcessList{#1}{\bps@passoption}}
 
-\ProvideDocumentCommand{\bps@comploption}{O{false} m}{%
+\bps@passoptions{
+	scheme,     noscheme,
+	pseudocode, nopseudocode,
+	assembly,   noassembly,
+	gantt,      nogantt,
+	solution,   nosolution,
+	maketitle,  nomaketitle,
+	header,     noheader,
+	listings,   nolistings,
+}
+
+\NewDocumentCommand{\bps@comploption}{O{false} m}{%
 	\DeclareBoolOption[#1]{#2}%
 	\DeclareComplementaryOption{no#2}{#2}}
 
-\bps@passoptions{
-	scheme, noscheme,
-	pseudocode, nopseudocode,
-	assembly, noassembly,
-	gantt, nogantt,
-	solution, nosolution,
-	maketitle, nomaketitle,
-	header, noheader,
-	listings, nolistings,
-}
-
-\SetupKeyvalOptions{
-	family=bps,
-	prefix=bps@,
-}
 \bps@comploption{antonella}
 \bps@comploption{tabu}
 \bps@comploption{math}
 
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
-\ProcessOptions*
+\DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{article}}
+\ProcessKeyvalOptions*
 
-\LoadClass{article}
+\LoadClass[12pt]{article}
 
-% pages
-\PassOptionsToPackage{
-	letterpaper,
-	margin=1.25in,
-	tmargin=1.5in,
-	bmargin=1.5in,
-}{geometry}
-
-\PassOptionsToPackage{
-	warnings-off={mathtools-colon,mathtools-overbracket}
-}{unicode-math}
-
-\RequirePackage{brandeis-problemset}
+\RequirePackage[
+	maketitle,
+	header,
+	listings,
+]{brandeis-problemset}
 
 % tables
 \ifbps@tabu
@@ -99,7 +86,12 @@
 
 % utility
 \RequirePackage{hyperref}
-\RequirePackage{geometry}
+\RequirePackage[
+	letterpaper,
+	margin=1.25in,
+	tmargin=1.5in,
+	bmargin=1.5in,
+]{geometry}
 
 % fonts
 % NOTE: The order these packages are loaded in is very important.
@@ -113,7 +105,9 @@
 	\ifbps@math
 		\RequirePackage{amsmath}[2013/01/14]
 		% unicode-math makes equations copy/pastable in pdf output
-		\RequirePackage{unicode-math}
+		\RequirePackage[
+			warnings-off={mathtools-colon,mathtools-overbracket}
+		]{unicode-math}
 	\else
 		\RequirePackage{fontspec}
 	\fi
