@@ -1,4 +1,6 @@
 \documentclass{ltxguidex}
+\usepackage{brandeis-problemset}
+
 \usepackage{textcomp} % needed for listings
 \usepackage{hologo} % xetex, etc. logos
 \usepackage{changelog}
@@ -6,6 +8,23 @@
 \newcommand{\fontspecok}{\hologo{XeLaTeX} or \hologo{LuaTeX}}
 \newcommand{\cosi}[1]{\textsc{cosi}~#1}
 \newnotice{todo}{To-do}
+
+\usepackage{xparse}
+\newcommand{\reqopt}[1]{Requires the \texttt{\color{magenta}#1} option.\par}
+\newcommand{\dep}[1]{\textbf{Warning:} deprecated since #1.\par}
+\newcommand{\withopt}[1]{\fbox{With option \option{#1}}}
+\makeatletter
+\NewDocumentCommand{\withopts}{>{\SplitList{,}} m}
+	{\newif\ifopt@first\opt@firsttrue
+	\newcommand{\opt@}[1]{\ifopt@first
+			\opt@firstfalse
+		\else
+			,\
+		\fi
+		\option{##1}}
+	\fbox{With any of the
+	\ProcessList{#1}{\opt@} options}}
+\makeatother
 
 \usepackage{fontspec}
 \setmainfont{Tiempos Text}
@@ -62,13 +81,21 @@ due date).
 
 \subsection{Default packages loaded}
 
+In general, \bps\ will only load a feature if it's useful in more than one
+class; features like Gantt charts, Scheme code, assembly code, and so on,
+are loaded on demand.
+
 \begin{enumerate}
 \item \ctan{hyperref}, for a nicely-linked table of contents;
 	|\href||{url}{label}|.
-\item \ctan{listings}, for verbatim code listings (including the
-	|assembly|, |java|, and |pseudocode| environments).
-\item \ctan{xcolor}, for gray line numbers in code listings (and perhaps
-	colored listings in the future); e.g.\ |\color||{gray}|.
+\item \withopts{listings, scheme, pseudocode, scheme}
+\begin{enumerate}
+	\item \ctan{listings}, for verbatim code listings (including the
+		|assembly|, |java|, and |pseudocode| environments).
+	\item \ctan{xcolor}, for colored identifiers, strings, comments, and
+		line numbers in listings; e.g.\ |\color||{gray}|.
+\end{enumerate}
+\item \ctan{geometry}
 \item \ctan{enumitem} for better control over the margins and spacing of
 	the |enumerate|, |itemize|, and |description|
 	environments.
@@ -82,10 +109,10 @@ due date).
 		complete listing.
 	\item \ctan{mathtools} for other useful/utilitarian commands.
 \end{enumerate}
-\item Table packages: \begin{enumerate}
+\item \withopt{tabu} \begin{enumerate}
 	\item \ctan{multirow} for cells spanning multiple rows.
-	\item \ctan{booktabs} for good-by-default tables and the |\cline|
-		macro.
+	\item \ctan{booktabs} for beautiful-by-default tables and the
+		|\cline| macro.
 	\item \ctan{tabu}, the best table package with dynamically resizable
 		columns, easy creation of new column types, and more.
 \end{enumerate}
@@ -462,6 +489,13 @@ An abbreviation for |\textbf|.
 An abbreviation for |\textit|.
 \begin{desc}|\Tt{<text>}|\end{desc}
 An abbreviation for |\texttt|.
+
+\section{A class and a package}
+As a user, you'll likely only need the \bps\ document class. However,
+a \emph{package} named \bps\ is also provided. The class styles an entire
+document, while the package only provides commands. This allows --- for
+example --- loading the package for the examples in this document without
+messing up our titles, headers, and so on.
 
 \section{Example}\label{sec:example}
 
