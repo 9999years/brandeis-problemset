@@ -26,6 +26,8 @@
 \bps@comploption{listings}
 \ProcessKeyvalOptions*
 
+\let\bps@comploption\relax
+
 \RequirePackage{changepage}
 
 \newif\iffontspec@ok
@@ -41,29 +43,37 @@
 }
 \ExplSyntaxOff
 
-\ifbps@listings
-	\RequirePackage{listings}
-	\lstset{
-		basicstyle=\ttfamily,
-		numbers=left,
-		numberstyle=\color{gray}\ttfamily,
-		aboveskip=1em,
-		belowskip=0.5em,
-		breaklines,
-		breakatwhitespace=true,
-		tabsize=4,
-		keywordstyle={\bf\ttfamily\color[rgb]{0,.3,.7}},
-		commentstyle={\color[rgb]{0.133,0.545,0.133}},
-		stringstyle={\color[rgb]{0.75,0.49,0.07}},
-	}
+\newif\ifbps@listingssetup
+\newcommand{\bps@setuplistings}{%
+	\ifbps@listingssetup
+	\else
+		\RequirePackage{listings}%
+		\lstset{
+			basicstyle=\ttfamily,
+			numbers=left,
+			numberstyle=\color{gray}\ttfamily,
+			aboveskip=1em,
+			belowskip=0.5em,
+			breaklines,
+			breakatwhitespace=true,
+			tabsize=4,
+			keywordstyle={\bf\ttfamily\color[rgb]{0,.3,.7}},
+			commentstyle={\color[rgb]{0.133,0.545,0.133}},
+			stringstyle={\color[rgb]{0.75,0.49,0.07}},
+		}%
+		\RequirePackage{xcolor}%
+		\bps@listingssetuptrue
+	\fi
+}
 
+\ifbps@listings
 	\lstnewenvironment{java}[1][]
 		{\lstset{language=java, #1}}
 		{}
 \fi
 
 \ifbps@scheme
-	\RequirePackage{listings}
+	\bps@setuplistings
 	% Language definition by Rebecca Turner and Andreas Stuhlmüller.
 	\lstdefinelanguage[R5RS]{Scheme}{
 		morekeywords={*,/,<=,<,=>,=,>=,>,+,-,%
@@ -128,7 +138,7 @@
 \fi
 
 \ifbps@assembly
-	\RequirePackage{listings}
+	\bps@setuplistings
 	\lstnewenvironment{assembly}[1][]
 		{\lstset{
 			keywords={LOAD,STORE,ADD,SUB,MUL,DIV,INC,SKIP,BR,BLT,BGT,BLEQ,BGEQ,
@@ -144,29 +154,29 @@
 	\RequirePackage{tikz}
 	\RequirePackage{fp}
 	\RequirePackage{calc}
-	\newcounter{@gantt@time}
-	\newcounter{gantt@time@after}
-	\newlength{\gantt@unit}
+	\newcounter{bps@gantt@time}
+	\newcounter{bps@gantt@time@after}
+	\newlength{\bps@gantt@unit}
 	\NewDocumentEnvironment{ganttschedule}{m o} % total size, title
-		{\setlength{\gantt@unit}{\linewidth / \real{#1}}%
-		\setcounter{@gantt@time}{0}%
+		{\setlength{\bps@gantt@unit}{\linewidth / \real{#1}}%
+		\setcounter{bps@gantt@time}{0}%
 		\DeclareDocumentCommand{\burst}{m m} % pid, burst
-			{\setcounter{gantt@time@after}{\value{@gantt@time}}%
-			\addtocounter{gantt@time@after}{##2}%
-			\FPeval\gantthalf{(\arabic{@gantt@time}
-				+ \arabic{gantt@time@after}) / 2}%
+			{\setcounter{bps@gantt@time@after}{\value{bps@gantt@time}}%
+			\addtocounter{bps@gantt@time@after}{##2}%
+			\FPeval\gantthalf{(\arabic{bps@gantt@time}
+				+ \arabic{bps@gantt@time@after}) / 2}%
 
-			\draw (\value{@gantt@time}, 0) rectangle
-				(\value{gantt@time@after}, 1);
+			\draw (\value{bps@gantt@time}, 0) rectangle
+				(\value{bps@gantt@time@after}, 1);
 			\node at (\gantthalf, 0.5) {$P_{##1}$};
-			\draw [|<->|] (\value{@gantt@time} + 0.05, 1.25)
+			\draw [|<->|] (\value{bps@gantt@time} + 0.05, 1.25)
 				-- node[above=1mm] {##2}
-				(\value{gantt@time@after} - 0.05, 1.25);
+				(\value{bps@gantt@time@after} - 0.05, 1.25);
 
-			\setcounter{@gantt@time}{\value{gantt@time@after}}}%
+			\setcounter{bps@gantt@time}{\value{bps@gantt@time@after}}}%
 
 		\IfValueT{#2}{\begin{center} #2 \end{center}}%
-		\begin{tikzpicture}[x=\gantt@unit]}
+		\begin{tikzpicture}[x=\bps@gantt@unit]}
 		{\end{tikzpicture}}
 \else
 	\NewDocumentEnvironment{ganttschedule}{m o}
@@ -176,47 +186,47 @@
 			class?}}{}
 \fi
 
-\newif\ifbps@pseudocodeloaded
 \let\pseudocodesymbolfont\ttfamily
 \ifbps@pseudocode
+	\bps@setuplistings
 	% pseudocode commands
-
-	% lazily loads pseudocode environment
-	\newcommand{\ensure@pseudocode}{%
-		\ifbps@pseudocodeloaded
-		\else
-			\iffontspec@ok
-				% use unicode shortcuts
-				\ProvideDocumentCommand{\pseudocodeleftarrow} {}{\pseudocodesymbolfont ←}
-				\ProvideDocumentCommand{\pseudocoderightarrow}{}{\pseudocodesymbolfont →}
-				\ProvideDocumentCommand{\pseudocodele}        {}{\pseudocodesymbolfont ≤}
-				\ProvideDocumentCommand{\pseudocodege}        {}{\pseudocodesymbolfont ≥}
-				\ProvideDocumentCommand{\pseudocodeemptyset}  {}{\pseudocodesymbolfont ∅}
-				\ProvideDocumentCommand{\pseudocodene}        {}{\pseudocodesymbolfont ≠}
-				\ProvideDocumentCommand{\pseudocodeinfty}     {}{\pseudocodesymbolfont ∞}
-				\@ifundefined{lmmath}{%
-					\newfontface{\lmmath}{latinmodern-math.otf}%
-				}{}%
-				\@ifundefined{lmmath}{}{%
-					\let\pseudocodesymbolfont\lmmath
-				}%
-			\else
-				% use math-mode fallbacks
-				\ProvideDocumentCommand{\pseudocodeleftarrow} {}{\ensuremath{\leftarrow}}
-				\ProvideDocumentCommand{\pseudocoderightarrow}{}{\ensuremath{\rightarrow}}
-				\ProvideDocumentCommand{\pseudocodele}        {}{\ensuremath{\le}}
-				\ProvideDocumentCommand{\pseudocodege}        {}{\ensuremath{\ge}}
-				\ProvideDocumentCommand{\pseudocodeemptyset}  {}{\ensuremath{\emptyset}}
-				\ProvideDocumentCommand{\pseudocodene}        {}{\ensuremath{\ne}}
-				\ProvideDocumentCommand{\pseudocodeinfty}     {}{\ensuremath{\infty}}
-			\fi
-			\bps@pseudocodeloadedtrue
-		\fi
-	}
+	\iffontspec@ok
+		% use unicode shortcuts
+		\newcommand{\bps@pcsym}[2]
+			{\expandafter\providecommand
+				\csname pseudocode#1\endcsname
+				{\pseudocodesymbolfont #2}}
+		\bps@pcsym{leftarrow} {←}
+		\bps@pcsym{rightarrow}{→}
+		\bps@pcsym{le}        {≤}
+		\bps@pcsym{ge}        {≥}
+		\bps@pcsym{emptyset}  {∅}
+		\bps@pcsym{ne}        {≠}
+		\bps@pcsym{infty}     {∞}
+		\@ifundefined{lmmath}{%
+			\newfontface{\lmmath}{latinmodern-math.otf}%
+		}{}%
+		\@ifundefined{lmmath}{}{%
+			\let\pseudocodesymbolfont\lmmath
+		}%
+	\else
+		% use math-mode fallbacks
+		\newcommand{\bps@pcsym}[2]
+			{\expandafter\providecommand
+				\csname pseudocode#1\endcsname
+				{\ensuremath{#2}}}
+		\bps@pcsym{leftarrow} {\leftarrow}
+		\bps@pcsym{rightarrow}{\rightarrow}
+		\bps@pcsym{le}        {\le}
+		\bps@pcsym{ge}        {\ge}
+		\bps@pcsym{emptyset}  {\emptyset}
+		\bps@pcsym{ne}        {\ne}
+		\bps@pcsym{infty}     {\infty}
+	\fi
+	\let\bps@pcsym\relax
 
 	\lstnewenvironment{pseudocode}[1][]
-		{\ensure@pseudocode
-		\lstset{
+		{\lstset{
 			keywords={Input,Output,Complexity,while,do,return,for,to,if,then,else,True,False,None,and,or,nil,len},
 			literate={<-}{{\pseudocodeleftarrow}}2
 				{->} {{\pseudocoderightarrow}}2
@@ -229,6 +239,8 @@
 			morekeywords={#1},
 	}}{}
 \fi
+
+\let\bps@setuplistings\relax
 
 \newcommand{\solutionstyle}{\color{blue}}
 \ifbps@solution
@@ -287,12 +299,12 @@
 % #1: env name
 % #2: pagebreak default
 \newcommand{\bps@problemkeys}[2]{%
-	\expandafter\newlength\csname #1indent\endcsname
-	\expandafter\setlength\csname #1indent\endcsname{1in}%
-	\expandafter\def\csname #1@title\endcsname{}%
-	\expandafter\def\csname #1@number\endcsname{\arabic{#1number}}%
+	\expandafter\newlength\csname bps@#1indent\endcsname
+	\expandafter\setlength\csname bps@#1indent\endcsname{1in}%
+	\expandafter\def\csname bps@#1@title\endcsname{}%
+	\expandafter\def\csname bps@#1@number\endcsname{\arabic{#1number}}%
 	\define@key{#1}{title}{%
-		\expandafter\renewcommand{\csname #1@title\endcsname}{: #1}}%
+		\expandafter\renewcommand{\csname bps@#1@title\endcsname}{: #1}}%
 	\expandafter\def\csname bps@#1pagebreak\endcsname{%
 		\csname ifKV@#1@pagebreak\endcsname
 			\vfill\pagebreak
@@ -323,12 +335,12 @@
 	\@ifundefined{cmdKV@#1@number}{%
 		\stepcounter{#1number}%
 	}{%
-		\expandafter\let\csname #1@number\expandafter\endcsname
+		\expandafter\let\csname bps#1@number\expandafter\endcsname
 			\csname cmdKV@#1@number\endcsname
 	}%
 	% define labels for \ref and the like
 	\edef\@currentlabel{#2}%
-	\edef\bps@problem@title@{Problem \@currentlabel\csname #1@title\endcsname}
+	\edef\bps@problem@title@{Problem \@currentlabel\csname bps@#1@title\endcsname}
 	\edef\@currentlabelname{\bps@problem@title@}%
 	% no spaces or numbers before the \section command
 	\renewcommand{\@seccntformat}[1]{}%
@@ -348,13 +360,13 @@
 \NewDocumentEnvironment{problem}{O{}}{%
 	\setkeys{problem}{#1}%
 	\@ifundefined{cmdKV@problem@number}{}{\setcounter{subproblemnumber}{0}}%
-	\bps@problem@{problem}{\problem@number}{\section}%
-	\begin{adjustwidth}{\problemindent}{0pt}}
+	\bps@problem@{problem}{\bps@problem@number}{\section}%
+	\begin{adjustwidth}{\bps@problemindent}{0pt}}
 	{\end{adjustwidth}}
 
 % make sure to keep this code in sync with the problem env code
 \NewDocumentEnvironment{subproblem}{O{}}{%
 	\setkeys{subproblem}{#1}%
-	\bps@problem@{subproblem}{\problem@number.\subproblem@number}{\subsection}%
-	\begin{adjustwidth}{\subproblemindent}{0pt}}
+	\bps@problem@{subproblem}{\bps@problem@number.\bps@subproblem@number}{\subsection}%
+	\begin{adjustwidth}{\bps@subproblemindent}{0pt}}
 	{\end{adjustwidth}}

@@ -61,6 +61,10 @@
 \DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessKeyvalOptions*
 
+\let\bps@comploption\relax
+\let\bps@passoption\relax
+\let\bps@passoptions\relax
+
 \LoadClass[12pt]{article}
 
 \RequirePackage[
@@ -127,6 +131,13 @@
 			},
 		]{STIX2Math}
 	\fi
+	\newcommand{\setcodefont}[2][]{%
+		% don't fail if fontspec isn't loaded
+		\@ifundefined{setmonofont}{}{%
+			\let\pseudocodesymbolfont\texttt
+			\setmonofont[#1]{#2}%
+		}%
+	}
 \else
 	\ifbps@math
 		\RequirePackage[upint]{stix2}
@@ -144,7 +155,7 @@
 \fi
 
 \ifbps@antonella
-	\instructor{Dr.\ Antonella DiLillio}
+	\instructor{Dr.~Antonella DiLillio}
 	\iffontspec@ok
 		\setmonofont{Courier New}%
 	\else
@@ -153,25 +164,14 @@
 \fi
 
 % config commands
-\newcommand{\duedate}[1]         {\def\bps@duedate{#1}}
-\newcommand{\instructor}[1]      {\def\bps@instructor{#1}}
-\newcommand{\course}[1]          {\def\bps@course{#1}}
-\newcommand{\coursenumber}[1]    {\def\bps@course{\Sc{cosi} #1}}
-\newcommand{\assignment}[1]      {\def\bps@assignment{#1}}
-\newcommand{\problemsetnumber}[1]{\def\bps@assignment{Problem Set #1}}
-\newcommand{\setcodefont}[2][]{%
-	% don't fail if fontspec isn't loaded
-	\@ifundefined{setmonofont}{}{%
-		\let\pseudocodesymbolfont\texttt
-		\setmonofont[#1]{#2}%
-	}%
-}
-
 \define@cmdkeys{bps}[bps@]{duedate, instructor, course, assignment}
-\define@key{bps}{number}{\problemsetnumber{#1}}
-\define@key{bps}{coursenumber}{\coursenumber{#1}}
+% wrappers
 \define@key{bps}{author}{\author{#1}}
 \define@key{bps}{date}{\date{#1}}
+
+% helpers
+\define@key{bps}{number}{\def\bps@assignment{Problem Set #1}}
+\define@key{bps}{coursenumber}{\def\bps@course{\textsc{cosi} #1}}
 \define@key{bps}{codefont}{\setcodefont{#1}}
 \newcommand{\bpsset}[1]{\setkeys{bps}{#1}}
 \let\problemsetsetup\bpsset
