@@ -16,7 +16,12 @@
 	prefix=bps@,
 }
 
-\bps@comploption{scheme} % scheme code support
+% initializes complementary #1 and no#1 options
+\NewDocumentCommand{\bps@comploption}{O{false} m}{%
+	\DeclareBoolOption[#1]{#2}%
+	\DeclareComplementaryOption{no#2}{#2}}
+
+\bps@comploption{scheme}
 \bps@comploption{pseudocode}
 \bps@comploption{assembly}
 \bps@comploption{gantt}
@@ -194,13 +199,17 @@
 	% pseudocode commands
 	\iffontspec@ok
 		% use unicode shortcuts
-		\ProvideDocumentCommand{\pseudocodeleftarrow} {}{\pseudocodesymbolfont ←}
-		\ProvideDocumentCommand{\pseudocoderightarrow}{}{\pseudocodesymbolfont →}
-		\ProvideDocumentCommand{\pseudocodele}        {}{\pseudocodesymbolfont ≤}
-		\ProvideDocumentCommand{\pseudocodege}        {}{\pseudocodesymbolfont ≥}
-		\ProvideDocumentCommand{\pseudocodeemptyset}  {}{\pseudocodesymbolfont ∅}
-		\ProvideDocumentCommand{\pseudocodene}        {}{\pseudocodesymbolfont ≠}
-		\ProvideDocumentCommand{\pseudocodeinfty}     {}{\pseudocodesymbolfont ∞}
+		\newcommand{\bps@pcsym}[2]
+			{\expandafter\providecommand
+				\csname pseudocode#1\endcsname
+				{\pseudocodesymbolfont #2}}
+		\bps@pcsym{leftarrow} {←}
+		\bps@pcsym{rightarrow}{→}
+		\bps@pcsym{le}        {≤}
+		\bps@pcsym{ge}        {≥}
+		\bps@pcsym{emptyset}  {∅}
+		\bps@pcsym{ne}        {≠}
+		\bps@pcsym{infty}     {∞}
 		\@ifundefined{lmmath}{\@ifundefined{newfontface}{}{%
 			\newfontface{\lmmath}{latinmodern-math.otf}%
 		}}{}%
@@ -209,13 +218,17 @@
 		}%
 	\else
 		% use math-mode fallbacks
-		\ProvideDocumentCommand{\pseudocodeleftarrow} {}{\ensuremath{\leftarrow}}
-		\ProvideDocumentCommand{\pseudocoderightarrow}{}{\ensuremath{\rightarrow}}
-		\ProvideDocumentCommand{\pseudocodele}        {}{\ensuremath{\le}}
-		\ProvideDocumentCommand{\pseudocodege}        {}{\ensuremath{\ge}}
-		\ProvideDocumentCommand{\pseudocodeemptyset}  {}{\ensuremath{\emptyset}}
-		\ProvideDocumentCommand{\pseudocodene}        {}{\ensuremath{\ne}}
-		\ProvideDocumentCommand{\pseudocodeinfty}     {}{\ensuremath{\infty}}
+		\newcommand{\bps@pcsym}[2]
+			{\expandafter\providecommand
+				\csname pseudocode#1\endcsname
+				{\ensuremath{#2}}}
+		\bps@pcsym{leftarrow} {\leftarrow}
+		\bps@pcsym{rightarrow}{\rightarrow}
+		\bps@pcsym{le}        {\le}
+		\bps@pcsym{ge}        {\ge}
+		\bps@pcsym{emptyset}  {\emptyset}
+		\bps@pcsym{ne}        {\ne}
+		\bps@pcsym{infty}     {\infty}
 	\fi
 
 	\lstnewenvironment{pseudocode}[1][]
