@@ -1,35 +1,54 @@
+\PassOptionsToPackage{inline}{enumitem}
 \documentclass{ltxguidex}
-\usepackage{brandeis-problemset}
+\usepackage{fontspec}
+\usepackage[pseudocode]{brandeis-problemset}
 
+\usepackage{xkeyval}
+\usepackage{xparse}
 \usepackage{textcomp} % needed for listings
 \usepackage{hologo} % xetex, etc. logos
 \usepackage{changelog}
 \newcommand{\bps}{\ltxclass{brandeis-problemset}}
 \newcommand{\fontspecok}{\hologo{XeLaTeX} or \hologo{LuaTeX}}
-\newcommand{\cosi}[1]{\textsc{cosi}~#1}
+\newcommand{\unicode}[1]{\textsc{u+#1}}
+\NewDocumentCommand{\cosi}{o m}{\textsc{cosi}~#2\IfValueT{#1}{ (#1)}}
 \newnotice{todo}{To-do}
 
-\usepackage{xparse}
 \newcommand{\reqopt}[1]{Requires the \texttt{\color{magenta}#1} option.\par}
-\newcommand{\dep}[1]{\textbf{Warning:} deprecated since #1.\par}
-\newcommand{\withopt}[1]{\fbox{With option \option{#1}}}
+\newcommand{\dep}[1]{{\noticestyle Warning:} deprecated since #1.\par}
+\newcommand{\withopt}[1]{\fbox{With the \option{#1} option:}}
+
 \makeatletter
-\NewDocumentCommand{\withopts}{>{\SplitList{,}} m}
-	{\newif\ifopt@first\opt@firsttrue
-	\newcommand{\opt@}[1]{\ifopt@first
-			\opt@firstfalse
-		\else
-			,\
-		\fi
-		\option{##1}}
-	\fbox{With any of the
-	\ProcessList{#1}{\opt@} options}}
+\define@cmdkeys{joinlist}{sep, wrapper}
+\define@cmdkey{joinlist}{last}{\KV@joinlist@oxfordfalse}
+\define@boolkey{joinlist}{oxford}[true]{}
+\define@boolkey{joinlist}{and}[true]{\ifKV@joinlist@and\def\cmdKV@joinlist@last{and}\fi}
+\define@boolkey{joinlist}{or} [true]{\ifKV@joinlist@or \def\cmdKV@joinlist@last{or}\fi}
+\presetkeys{joinlist}{sep={,}, last=and, oxford, wrapper=\relax}{}
+\NewDocumentCommand{\joinlist}{O{} >{\SplitList{,}} m}
+	{{\setkeys{joinlist}{#1}%
+	\newcommand{\joinlist@wrapper}[1]{\item\cmdKV@joinlist@wrapper{##1}}%
+	\begin{itemize*}[
+		label={},
+		itemjoin={\cmdKV@joinlist@sep},
+		itemjoin*={\ifKV@joinlist@oxford\cmdKV@joinlist@sep\ \fi
+			\cmdKV@joinlist@last}]%
+		\ProcessList{#2}{\joinlist@wrapper}%
+	\end{itemize*}}}
 \makeatother
 
-\usepackage{fontspec}
+\makeatletter
+\NewDocumentCommand{\withopts}{m}
+	{\fbox{With any of the \joinlist[or, wrapper=\option]{#1} options:}}
+\makeatother
+\newcommand{\onlyclass}{Only available in the \bps\ document class.}
+\newcommand{\optenables}[2]{If \option{#1} is set, then \option{#2} is
+automatically enabled.}
+
 \setmainfont{Tiempos Text}
 \usepackage{FiraSans}
 \usepackage{FiraMono}
+\lstset{basewidth=0.6em}
 
 \lstnewenvironment{latexfile}[1]
 	{\lstset{
@@ -66,12 +85,19 @@
 	\https{github.com/9999years/brandeis-problemset}
 \end{note}
 
+\begin{note}
+	In roughly May 2021 I will graduate from Brandeis University and
+	this package will become unmaintained. Although I'd like the
+	computer science department to adopt this package, I'm not sure any
+	professors have an interest in that maintenance. If you care about
+	the extended future of this package, send some emails!
+\end{note}
+
 \tableofcontents
 \vfill
 \pagebreak
 
 \section{Default behavior}
-
 \bps\ provides packages and well-formatted constructs (notably the
 |problem| environment) for problem-set writers. \bps\ will always render
 its body copy as a Times variant (\ctan{stix} for plain \LaTeX\ or
@@ -80,7 +106,6 @@ contains the page number, author's name, course, instructor, and assignment
 due date).
 
 \subsection{Default packages loaded}
-
 In general, \bps\ will only load a feature if it's useful in more than one
 class; features like Gantt charts, Scheme code, assembly code, and so on,
 are loaded on demand.
@@ -88,18 +113,18 @@ are loaded on demand.
 \begin{enumerate}
 \item \ctan{hyperref}, for a nicely-linked table of contents;
 	|\href||{url}{label}|.
-\item \withopts{listings, scheme, pseudocode, scheme}
+\item \ctan{geometry} for page size and margins.
+\item \ctan{enumitem} for better control over the margins and spacing of
+	the |enumerate|, |itemize|, and |description|
+	environments.
+\item \withopts{listings, scheme, pseudocode, assembly}
 \begin{enumerate}
 	\item \ctan{listings}, for verbatim code listings (including the
 		|assembly|, |java|, and |pseudocode| environments).
 	\item \ctan{xcolor}, for colored identifiers, strings, comments, and
 		line numbers in listings; e.g.\ |\color||{gray}|.
 \end{enumerate}
-\item \ctan{geometry}
-\item \ctan{enumitem} for better control over the margins and spacing of
-	the |enumerate|, |itemize|, and |description|
-	environments.
-\item Math packages: \begin{enumerate}
+\item \withopt{math} \begin{enumerate}
 	\item \ctan{amsmath} for tons of useful math commands, including
 		|\text|, |\intertext|, and |\boxed| as well as the |bmatrix|,
 		|multiline|, |gather|, |align|, and
@@ -108,6 +133,9 @@ are loaded on demand.
 		Guide for the \package{amsmath} Package''} for a more
 		complete listing.
 	\item \ctan{mathtools} for other useful/utilitarian commands.
+	\item With \fontspecok, \ctan{unicode-math} to allow equations to be
+		copy-pasted.
+	\item The \ctan{stix2-otf} math fonts.
 \end{enumerate}
 \item \withopt{tabu} \begin{enumerate}
 	\item \ctan{multirow} for cells spanning multiple rows.
@@ -124,25 +152,70 @@ are loaded on demand.
 
 Class options are limited to configuration options which require the loading
 of fonts or other packages; ``string'' settings like the assignment's due
-date are configured either with the |\problemsetsetup| command or the
-commands described in section~\ref{sss:configcommands}.
+date are configured with the |\bpsset| command.
+
+All class options can be negated with |no<option>|; i.e.\ \option{scheme}
+can be disabled with \option{noscheme}. Later options override previous
+ones.
 
 \begin{keys}
-	\key{gantt} Load packages for the |ganttschedule| environment.
-	\key{scheme} Define the |scheme| language for the \ctan{listings}
-		package as well as the |scheme| shorthand environment.
-	\key{antonella} Use Dr.\ Antonella DiLillio's preferred styles (Courier
-		for code)
-	\key{solutions} Include |solution| environments in compiled
-		document.
+	\key{antonella} \onlyclass\ Use Dr.\ Antonella DiLillio's preferred
+		styles (Courier for code)
+	\key{tabu} \onlyclass\ Loads useful packages and defines commands for
+		typesetting tables.
+	\key{math} \onlyclass\ Loads utilities for typesetting mathematics.
+		Because mathematics requires specialized fonts\footnote{The
+		\textsc{stix2} math font that this package loads weighs in
+		at 740kb!} as well as several other specialized
+		packages,\footnote{Including \ctan{amsmath},
+		\ctan{mathtools}, and, with \fontspecok,
+		\ctan{unicode-math}.} this is disabled by default. Although
+		I find myself needing mathematics fonts frequently, I know
+		many students do not.
+	\key[default=true]{listings} Enables code listings and enables
+		default styles for colored keywords, pretty line numbers,
+		and so on. While only this option enables the |java|
+		environment, the \option{scheme}, \option{assembly}, and
+		\option{pseudocode} options also load and style the
+		\ctan{listings} package.
+	\key{scheme} Enable Scheme language support, in particular for the
+		\textsc{r5rs} dialect. Additionally, provides the |scheme|
+		environment.
+	\key{pseudocode} Enables the |pseudocode| environment, notably
+		useful for \cosi[data structures]{21b}.
+	\key{assembly} Enables the |assembly| environment, notably useful
+		for \cosi[operating systems]{131a}.
+	\key{solution} Show the content of |solution| environments; by
+		default, they are excluded from compilation using the
+		\ctan{comment} package.
+	\key{gantt} Loads the |ganttschedule| environment.
+	\key[default=true]{maketitle} Redefines |\maketitle| and defines
+		|\maketitlepage| to include information about the course,
+		instructor, assignment, and due date.
+		\optenables{maketitle}{option}.
+	\key[default=true]{header} Adds a header to the top of every page including
+		information about the author, assignment, due date, and
+		instructor. \optenables{header}{option}.
+	\key[default=true]{config} Enables document metadata like the
+		assignment's due date, name/number, instructor, and course
+		through the |\bpsset| command, which supports |\maketitle|,
+		page headers, and so on.
 \end{keys}
 
 \subsection{Setting options after loading \bps}
 
 \begin{desc}
-|\problemsetsetup{<options>}|
+|\bpsset{<options>}|
 \end{desc}
-Sets global \bps\ options.
+Sets global \bps\ options. Mnemonic: \textbf{B}randeis \textbf{p}roblem
+\textbf{s}et \textbf{set}up (this should feel familiar to users of the
+\ctan{listings} package).
+
+\begin{note}
+	|\bpsset| was renamed from |\problemsetsetup| in version 0.5.0. The
+	|\problemsetsetup| command is deprecated and will be removed in a
+	future release.
+\end{note}
 
 \begin{keys}
 \key{course}[\m{course name}]
@@ -158,7 +231,8 @@ Sets global \bps\ options.
 	\href{https://en.wikipedia.org/wiki/ISO_8601}{\textsc{iso} 8601
 	dates} are highly recommended.
 \key{instructor}[\m{course instructor}]
-	Course instructor.
+	Course instructor. With the \option{antonella} class-option, this is
+	automatically set to |Dr.~Antonella DiLillio|.
 \key{author}[\m{your name}]
 	Alternate interface for the |\author| command.
 \key{date}[\m{document date}]
@@ -167,37 +241,13 @@ Sets global \bps\ options.
 	With \fontspecok, pass the given font to |\setmonofont| and enable
 	Unicode shortcuts for the |pseudocode| environment. (If you need to
 	specify options to |\setmonofont|, use |\setcodefont|.)
-\key{gantt}[\bool][false]
-	Load packages for the |ganttschedule| environment.
-\key{antonella}[\bool][false]
-	Use Dr.\ Antonella DiLillio's preferred styles (Courier for code)
-\key{solutions}[\bool][false]
-	Include |solution| environments in compiled document.
 \end{keys}
-
-\subsubsection{Configuration commands}%
-\label{sss:configcommands}
-
-\bps\ additionally provides a number of configuration commands for setting a
-single opption with similar interfaces as the \TeX\ macros |\author|,
-|\title|, and |\date|.
-
-\begin{desc}|\duedate{<date>}|\end{desc} Sets the due date in full.
-\begin{desc}|\instructor{<name>}|\end{desc} Sets the instructor name.
-\begin{desc}|\course{<name>}|\end{desc} Sets the course name in full.
-\begin{desc}|\coursenumber{<number>}|\end{desc} Sets the course name by
-	number; e.g. |\coursenumber{21a}| gives a course of ``\cosi{21a}''.
-\begin{desc}|\assignment{<name>}|\end{desc} Sets the assignment name in
-	full.
-\begin{desc}|\problemsetnumber{<number>}|\end{desc} Sets the assignment name
-	by number; e.g. |\problemsetnumber{3}| gives an assignment of
-	``Problem Set 3''.
 
 \begin{desc}
 |\setcodefont[<fontspec options>]{<fontspec font name>}|
 \end{desc}
-Sets the monospaced font to \meta{font name} and uses it for shortcuts in
-the |pseudocode| environment.
+Sets the monospaced font to \meta{fontspec font name} and uses it for
+shortcuts in the |pseudocode| environment.
 
 \subsection{Practical usage}
 
@@ -207,14 +257,17 @@ makes sense for them to live in the same directory as the problem set source
 files. For instance, \filename{cosi21a.cls} might read:
 
 \begin{latexfile}{cosi21a.cls}
-\LoadClass[antonella]{brandeis-problemset}
+\LoadClass[antonella, pseudocode]{brandeis-problemset}
+
+% pass all unknown options to brandeis-problemset
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{brandeis-problemset}}
+\ProcessOptions\relax
 
 % set course/author data
-\problemsetsetup{
-	instructor=Dr.\ Antonella DiLillio,
+\bpsset{
 	coursenumber=21a,
+	author=Rebecca Turner,
 }
-\author{Rebecca Turner}
 
 % get a prettier code font -- these can be pretty big so they're not
 % loaded by default
@@ -230,14 +283,18 @@ and then \filename{ps1.tex} might read:
 \begin{latexfile}{ps1.tex}
 \documentclass{cosi21a}
 % stuff specific to this assignment
-\problemsetnumber{1}
-\duedate{2018-10-29}
+\bpsset{
+	number=1,
+	duedate=2018-10-29,
+}
 \begin{document}
 % etc.
 \end{document}
 \end{latexfile}
 
-See section~\ref{sec:example} for a more complete example.
+Note that you could use e.g.~|\documentclass[math]{cosi21a}| to add a
+specific per-document option. See section~\ref{sec:example} for a more
+complete example.
 
 \section{User commands and environments}
 
@@ -272,6 +329,38 @@ begins a new page. |<options>| may include:
 Vertical material is allowed in a~|problem|.
 
 \begin{desc}
+|\begin{subproblem}[<options>]...\end{subproblem}|
+\end{desc}
+Defines a subproblem. A subproblem is set 1~inch from the left margin
+(although this amount may be customized by modifying the |\subproblemindent|
+length) and begins a new page. Valid |<options>| are identical to the
+|problem| environment's, with the following exceptions:
+\begin{keys}
+\key[default=false]{pagebreak}
+	False by default.
+\key{part}
+\key{partlabel}
+	Not available in the |subproblem| environment.
+\end{keys}
+
+\begin{example}
+	Note that although these examples are too short to display them,
+	vertical material --- including listings --- is allowed in the
+	|problem| and |subproblem| environments.
+\begin{LTXexample}[wide]
+\begin{problem}
+  This is a problem in an assignment.
+\end{problem}
+
+Some solution here\dots
+
+\begin{subproblem}
+  This is a subproblem.
+\end{subproblem}
+\end{LTXexample}
+\end{example}
+
+\begin{desc}
 |\begin{solution}...\end{solution}|
 \end{desc}
 
@@ -287,11 +376,9 @@ assignment prompt and an answer key.
 	|\solutionstyle|; it's defined to |\color{blue}| by default.
 \end{note}
 
-\begin{desc}
-|\subproblem[<problem description>]|
-\end{desc}
-Prints a sub-problem, i.e.\ a |\subsection|. It doesn't do very much at the
-moment.
+\begin{example}
+
+\end{example}
 
 \begin{desc}
 |\Th[<column spec>]{<header text>}|
@@ -322,48 +409,40 @@ which look significantly better with Courier than \ctan{stix}' symbols.
 	\caption{Shortcuts provided by the \texttt{pseudocode}
 	environment}%
 	\label{tab:pseudocode}
-	\begin{tabular}{lll}
-	\Th{Input}    & \Th{Display}  & \Th{Codepoint} \\
-	\ttfamily <-  & $\leftarrow$  & U+2190 \\
-	\ttfamily ->  & $\rightarrow$ & U+2192 \\
-	\ttfamily (/) & $\emptyset$   & U+2205 \\
-	\ttfamily inf & $\infty$      & U+221E \\
-	\ttfamily !=  & $\ne$         & U+2260 \\
-	\ttfamily >=  & $\ge$         & U+2265 \\
-	\ttfamily <=  & $\le$         & U+2264 \\
+	\begin{tabular}{llll}
+	\Th{Input}    & \Th{Command}            & \Th{Display}          & \Th{Codepoint} \\
+	\ttfamily <-  & |\pseudocodeleftarrow|  & \pseudocodeleftarrow  & \unicode{2190} \\
+	\ttfamily ->  & |\pseudocoderightarrow| & \pseudocoderightarrow & \unicode{2192} \\
+	\ttfamily (/) & |\pseudocodeemptyset|   & \pseudocodeemptyset   & \unicode{2205} \\
+	\ttfamily inf & |\pseudocodeinfty|      & \pseudocodeinfty      & \unicode{221e} \\
+	\ttfamily !=  & |\pseudocodene|         & \pseudocodene         & \unicode{2260} \\
+	\ttfamily >=  & |\pseudocodege|         & \pseudocodege         & \unicode{2265} \\
+	\ttfamily <=  & |\pseudocodele|         & \pseudocodele         & \unicode{2264} \\
 	\end{tabular}
 \end{table}
 
-\begin{todo}
-	Improve the font selection mechanism; maybe provide a command for
-	each symbol?
-\end{todo}
-
-\begin{todo}
-	If your \TeX\ engine doesn't support \textsc{utf}-8 input, the
-	shortcuts might appear totally blank or garbled. Good luck! It will
-	surely work with \fontspecok.
-\end{todo}
-
-\begin{latexcode}
-% the optional [Bar] makes [Bar] bold like the other keywords
+\begin{example}
+	Note how the option |[Bar]| argument makes |Bar| appear bold like
+	any other keyword in the typeset listing.
+\begin{LTXexample}[wide, preset=\lstset{numbers=none}, explpreset={numbers=none}, rframe=, hsep=3em]
 \begin{pseudocode}[Bar]
 Bar(a, n)
     Input:  two integers, a and n
     Output: a^n
     k <- n # k is a counter
-    b <- 1
+    b <- inf
     c <- a
-    while k > 0 do
+    while k >= 0 do
         if k mod 2 = 0 then
-            k <- k/2
+            k <- k / 2
             c <- c * c
         else
             k <- k - 1
             b <- b * c
     return b
 \end{pseudocode}
-\end{latexcode}
+\end{LTXexample}
+\end{example}
 
 \begin{desc}
 |\begin{assembly}[<listings options>]...\end{assembly}|
@@ -449,7 +528,7 @@ Draw a burst for process |<pid>| of time length |<burst length>|.
 	\ctan{calc}, it can add significantly to document compile times. If
 	you intend to use the |ganttschedule| environment, make sure to use
 	the \option{gantt} class option or set \option{gantt} in
-	|\problemsetsetup|. If you fail to include the \option{gantt}
+	|\bpsset|. If you fail to include the \option{gantt}
 	option, you will see an error message:
 
 \begin{latexcode}
@@ -507,7 +586,7 @@ in the \bps\ repository.}
 \begin{latexcode}
 \documentclass[gantt]{brandeis-problemset}
 \author{Rebecca Turner}
-\problemsetsetup{
+\bpsset{
 	coursenumber=21a,
 	instructor=Dr.\ Liuba Shrira,
 	duedate=2018-10-20,
@@ -575,6 +654,18 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 \end{latexcode}
 
 \begin{changelog}[author=Rebecca Turner]
+\begin{version}[v=0.5.0, date=2019-03-01]
+\removed
+	\item The following commands have been removed in favor of the
+		|\bpsset| command, which has an identical featureset:
+		|\duedate{<date>}|,
+		|\instructor{<name>}|,
+		|\course{<name>}|,
+		|\coursenumber{<number>}|,
+		|\assignment{<name>}|, and
+		|\problemsetnumber{<number>}|.
+\end{version}
+
 \begin{version}[v=0.4.4, date=2019-02-14]
 \changed
 	\item Changed Times body copy font from \ctan{tex-gyre}'s Termes to

@@ -16,7 +16,8 @@
 % and version 1.3c or later is part of all distributions of LaTeX
 % version 2005/12/01 or later.
 %
-% This work has the LPPL maintenance status `maintained'.
+% This work has the LPPL maintenance status `maintained'. On 2021-05-01 (May
+% 1st), this work will have the LPPL maintenance status `unmaintained'.
 %
 % The Current Maintainer of this work is Rebecca Turner.
 
@@ -25,6 +26,7 @@
 
 \PassOptionsToClass{12pt}{article}
 \PassOptionsToPackage{
+	config,
 	maketitle,
 	header,
 	listings,
@@ -53,6 +55,7 @@
 	maketitle, nomaketitle,
 	header, noheader,
 	listings, nolistings,
+	config, noconfig,
 }
 
 \SetupKeyvalOptions{
@@ -97,7 +100,6 @@
 \fi
 
 % formatting
-\RequirePackage{xcolor}
 \RequirePackage{enumitem}
 \RequirePackage{titletoc}
 
@@ -140,7 +142,7 @@
 	\newcommand{\setcodefont}[2][]{%
 		% don't fail if fontspec isn't loaded
 		\@ifundefined{setmonofont}{}{%
-			\let\pseudocodesymbolfont\texttt
+			\let\pseudocodesymbolfont\ttfamily
 			\setmonofont[#1]{#2}%
 		}%
 	}
@@ -169,19 +171,6 @@
 	\fi
 \fi
 
-% config commands
-\define@cmdkeys{bps}[bps@]{duedate, instructor, course, assignment}
-% wrappers
-\define@key{bps}{author}{\author{#1}}
-\define@key{bps}{date}{\date{#1}}
-
-% helpers
-\define@key{bps}{number}{\def\bps@assignment{Problem Set #1}}
-\define@key{bps}{coursenumber}{\def\bps@course{\textsc{cosi} #1}}
-\define@key{bps}{codefont}{\setcodefont{#1}}
-\newcommand{\bpsset}[1]{\setkeys{bps}{#1}}
-\let\problemsetsetup\bpsset
-
 \widowpenalties 1 10000
 \raggedbottom
 \setlength{\parindent}{0em}
@@ -202,18 +191,8 @@
 \setlist{
 	partopsep=0em,
 	topsep=0em,
-	%bottomsep=1em,
 	leftmargin=2em,
 }
-
-%% {command}[shape]{format}{label}{sep}{before}[after]
-%\titleformat{\part}{\bfseries\Large}{Part \thepart}{1em}{}[]
-%\titleformat{\section}{\bfseries\large}{}{0em}{}[]
-%\titleformat{\subsection}{\llap{\thesubsection.}}{}{1em}{}[]
-%% {command}{left}{before}{after}[right]
-%\titlespacing{\part}{0em}{-0.25in}{0em}[0em]
-%\titlespacing{\section}{0em}{1em}{0em}[0em]
-%\titlespacing{\subsection}{0em}{1em}{0em}[0em]
 
 \titlecontents{part}
 	[3.8em] % left
