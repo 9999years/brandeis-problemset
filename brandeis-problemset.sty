@@ -5,11 +5,6 @@
 \RequirePackage{xparse}
 \RequirePackage{xkeyval}
 
-% initializes complementary #1 and no#1 options
-\ProvideDocumentCommand{\bps@comploption}{O{false} m}{%
-	\DeclareBoolOption[#1]{#2}%
-	\DeclareComplementaryOption{no#2}{#2}}
-
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{
 	family=bps,
