@@ -260,7 +260,8 @@ files. For instance, \filename{cosi21a.cls} might read:
 \LoadClass[antonella, pseudocode]{brandeis-problemset}
 
 % pass all unknown options to brandeis-problemset
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{brandeis-problemset}}
+\DeclareOption*{\PassOptionsToClass
+	{\CurrentOption}{brandeis-problemset}}
 \ProcessOptions\relax
 
 % set course/author data
@@ -347,7 +348,8 @@ length) and begins a new page. Valid |<options>| are identical to the
 	Note that although these examples are too short to display them,
 	vertical material --- including listings --- is allowed in the
 	|problem| and |subproblem| environments.
-\begin{LTXexample}[wide]
+\end{example}
+\begin{LTXexample}[wide, hsep=3em]
 \begin{problem}
   This is a problem in an assignment.
 \end{problem}
@@ -358,7 +360,6 @@ Some solution here\dots
   This is a subproblem.
 \end{subproblem}
 \end{LTXexample}
-\end{example}
 
 \begin{desc}
 |\begin{solution}...\end{solution}|
@@ -451,7 +452,7 @@ bolded as appropriate:
 Bar(a, n)
     Input:  two integers, a and n
     Output: a^n
-    k <- n # k is a counter
+    k <- n  # k is a counter
     b <- inf
     c <- a
     while k >= 0 do
@@ -536,11 +537,11 @@ Draw a burst for process |<pid>| of time length |<burst length>|.
 
 \begin{latexcode}
 \begin{ganttschedule}{19}
-	\burst{2}{1}
-	\burst{4}{1}
-	\burst{3}{2}
-	\burst{5}{5}
-	\burst{1}{10}
+	\pid{2}{1}
+	\pid{4}{1}
+	\pid{3}{2}
+	\pid{5}{5}
+	\pid{1}{10}
 \end{ganttschedule}
 \end{latexcode}
 
@@ -665,11 +666,11 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 \end{problem}
 
 \begin{ganttschedule}{19}
-	\burst{2}{1}
-	\burst{4}{1}
-	\burst{3}{2}
-	\burst{5}{5}
-	\burst{1}{10}
+	\pid{2}{1}
+	\pid{4}{1}
+	\pid{3}{2}
+	\pid{5}{5}
+	\pid{1}{10}
 \end{ganttschedule}
 \end{document}
 \end{latexcode}
