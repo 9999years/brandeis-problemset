@@ -59,7 +59,7 @@ automatically enabled.}
 
 \author{Rebecca Turner\thanks{Brandeis University; \email{rebeccaturner@brandeis.edu}}}
 \title{The \bps\ Document Class}
-\date{2019/02/14 0.4.4}
+\date{2019/03/06 0.5.0}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -394,7 +394,7 @@ Prints pseudocode.\footnote{Designed for \cosi{21a} as taught by Dr.\
 Antonella DiLillo}
 
 Several ``shortcuts,'' which replace a source-code sequence like
-\texttt{->} with a symbol like $\rightarrow$, are shown in
+\texttt{->} with a symbol like \texttt{→}, are shown in
 table~\ref{tab:pseudocode}.
 
 These shortcuts display in |\pseudocodesymbolfont| (default:
@@ -403,6 +403,27 @@ easiest way to change |\pseudocodesymbolfont| is with |\setcodefont|. If
 you use the \option{antonella} option with \fontspecok, \bps\ will load
 \ctan{lm-math} and display the symbols seen in table~\ref{tab:pseudocode},
 which look significantly better with Courier than \ctan{stix}' symbols.
+
+The following words are treated as keywords in pseudocode, and will be
+bolded as appropriate:
+|Input|,
+|Output|,
+|Complexity|,
+|while|,
+|do|,
+|return|,
+|for|,
+|to|,
+|if|,
+|then|,
+|else|,
+|True|,
+|False|,
+|None|,
+|and|,
+|or|,
+|nil|, and
+|len|.
 
 \begin{table}[h]
 	\centering
@@ -424,7 +445,8 @@ which look significantly better with Courier than \ctan{stix}' symbols.
 \begin{example}
 	Note how the option |[Bar]| argument makes |Bar| appear bold like
 	any other keyword in the typeset listing.
-\begin{LTXexample}[wide, preset=\lstset{numbers=none}, explpreset={numbers=none}, rframe=, hsep=3em]
+\end{example}
+\begin{LTXexample}[preset=\lstset{numbers=none}, explpreset={numbers=none}, rframe=, hsep=3em]
 \begin{pseudocode}[Bar]
 Bar(a, n)
     Input:  two integers, a and n
@@ -442,7 +464,6 @@ Bar(a, n)
     return b
 \end{pseudocode}
 \end{LTXexample}
-\end{example}
 
 \begin{desc}
 |\begin{assembly}[<listings options>]...\end{assembly}|
@@ -654,16 +675,40 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 \end{latexcode}
 
 \begin{changelog}[author=Rebecca Turner]
-\begin{version}[v=0.5.0, date=2019-03-01]
+\begin{version}[v=Coming soon\dots]
+\added
+	\item Support for \cosi{130b}, including regular expressions and
+	context-free grammars.
+\end{version}
+
+\begin{version}[v=0.5.0, date=2019-03-06]
+\changed
+	\item Cleaned up internals; improved option system, split \bps\ into
+	a class and a package, renamed commands and lengths to use the
+	|bps@| prefix more consistently.
+	\item \bps\ now has a modular and much more conservative approach;
+	far fewer packages are loaded and features are loaded only upon
+	request to a much greater extent.
+	\item |subproblem| is now an environment, not a command, with an
+	interface matching the |problem| environment.
 \removed
 	\item The following commands have been removed in favor of the
-		|\bpsset| command, which has an identical featureset:
+		|\bpsset| command, which encompasses their functionality
+		entirely:
 		|\duedate{<date>}|,
 		|\instructor{<name>}|,
 		|\course{<name>}|,
 		|\coursenumber{<number>}|,
 		|\assignment{<name>}|, and
 		|\problemsetnumber{<number>}|.
+	\item Removed dependencies: \ctan{environ} and \ctan{titlesec}. No
+		longer unconditionally loaded: \ctan{hyperref},
+		\ctan{xcolor}, \ctan{comment}, \ctan{listings},
+		\ctan{multirow}, \ctan{booktabs}, \ctan{longtable},
+		\ctan{tabu}.
+\deprecated
+	\item The |\problemsetsetup| command, which has been renamed
+		|\bpsset|.
 \end{version}
 
 \begin{version}[v=0.4.4, date=2019-02-14]

@@ -1,4 +1,4 @@
-\ProvidesPackage{brandeis-problemset}[2019/02/25 0.1.0 Commands for COSI
+\ProvidesPackage{brandeis-problemset}[2019/03/06 0.5.0 Commands for COSI
 	problem sets at Brandeis University]
 
 % utility
@@ -226,19 +226,23 @@
 		\bps@pcsym{infty}     {\infty}
 	\fi
 
+	\lstdefinelanguage{Pseudocode}{
+		keywords={Input,Output,Complexity,while,do,return,for,to,if,then,else,True,False,None,and,or,nil,len},
+		literate={<-}{{\pseudocodeleftarrow}}2
+			{->} {{\pseudocoderightarrow}}2
+			{(/)}{{\pseudocodeemptyset}}2
+			{inf}{{\pseudocodeinfty}}3
+			{!=} {{\pseudocodene}}2
+			{>=} {{\pseudocodege}}2
+			{<=} {{\pseudocodele}}2,
+		morecomment=[l]{\#},
+	}
+
 	\lstnewenvironment{pseudocode}[1][]
 		{\lstset{
-			keywords={Input,Output,Complexity,while,do,return,for,to,if,then,else,True,False,None,and,or,nil,len},
-			literate={<-}{{\pseudocodeleftarrow}}2
-				{->} {{\pseudocoderightarrow}}2
-				{(/)}{{\pseudocodeemptyset}}2
-				{inf}{{\pseudocodeinfty}}3
-				{!=} {{\pseudocodene}}2
-				{>=} {{\pseudocodege}}2
-				{<=} {{\pseudocodele}}2,
-			morecomment=[l]{\#},
+			language=Pseudocode,
 			morekeywords={#1},
-	}}{}
+		}}{}
 \fi
 
 \let\bps@setuplistings\relax
