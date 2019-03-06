@@ -6,25 +6,34 @@
 	pseudocode,
 	tabu
 ]{brandeis-problemset}
-\errorcontextlines 10
-\author{Rebecca Turner}
-\problemsetsetup{
+\bpsset{
 	coursenumber=21a,
+	author=Rebecca Turner,
 	instructor=Dr.\ Liuba Shrira,
 	duedate=2018-10-20,
 	number=3,
 }
-\newcommand{\io}{\ac{io}}
-\newcommand{\cpu}{\ac{cpu}}
+\newacronyms{io, cpu}
 \begin{document}
 \maketitle
 
-\Bf{Note:} This example document is provided for illustrative purposes. The
-solutions below are not guaranteed to be correct, complete, or relevant.
+\Bf{Note:} This example document is provided to demonstrate the capability
+and visual style of the
+\href{https://ctan.org/pkg/brandeis-problemset}{\Tt{brandeis-problemset}}
+document class. The solutions below are not guaranteed to be correct,
+complete, or relevant.
+
+The source code for this document is available at
+\begin{quote}
+	\href{http://mirrors.ctan.org/macros/latex/contrib/brandeis-problemset/example.tex}{\Tt{/macros/latex/contrib/brandeis-problemset/example.tex}}
+\end{quote}
+on \href{https://ctan.org/}{\textsc{ctan}} (or, if you have
+\Tt{brandeis-problemset} installed, in your \TeX\ distribution's
+documentation directory).
 
 \tableofcontents
 
-\begin{problem}[part]
+\begin{problem}[part=Textbook problems]
 	An assembly language program implements the following loop:
 
 \begin{lstlisting}[language=c]

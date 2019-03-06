@@ -1,5 +1,6 @@
 \ProvidesClass{brandeis-problemset}[2019/03/06 0.5.0 COSI problem sets at
 	Brandeis University]
+\NeedsTeXFormat{LaTeX2e}
 % Description: A document class for Brandeis University's computer science
 %              courses' problem sets
 % Homepage:    https://github.com/9999years/brandeis-problemset
@@ -45,6 +46,7 @@
 	assembly,   noassembly,
 	gantt,      nogantt,
 	solution,   nosolution,
+	tabu,       notabu,
 	maketitle,  nomaketitle,
 	header,     noheader,
 	listings,   nolistings,
@@ -56,7 +58,6 @@
 	\DeclareComplementaryOption{no#2}{#2}}
 
 \bps@comploption{antonella}
-\bps@comploption{tabu}
 \bps@comploption{math}
 
 \DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{article}}
@@ -80,8 +81,6 @@
 	\RequirePackage{booktabs}
 	\RequirePackage{longtable}
 	\RequirePackage{tabu}
-	\NewExpandableDocumentCommand{\Th}{O{l} m}
-		{\multicolumn{1}{#1}{\Bf{#2}}}
 \fi
 
 % formatting
@@ -174,7 +173,6 @@
 \let\Bf\textbf
 \let\It\textit
 \let\Tt\texttt
-\let\ac\textsc
 
 \renewcommand{\labelitemi}{---}
 \setlist[1]{

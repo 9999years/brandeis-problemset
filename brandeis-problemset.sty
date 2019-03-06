@@ -1,5 +1,6 @@
 \ProvidesPackage{brandeis-problemset}[2019/03/06 0.5.0 Commands for COSI
 	problem sets at Brandeis University]
+\NeedsTeXFormat{LaTeX2e}
 
 % utility
 \RequirePackage{xparse}
@@ -23,6 +24,7 @@
 \bps@comploption{solution}
 \bps@comploption{maketitle}
 \bps@comploption{header}
+\bps@comploption{tabu}
 \bps@comploption{listings}
 \bps@comploption{config}
 \ProcessKeyvalOptions*
@@ -141,15 +143,15 @@
 
 \ifbps@assembly
 	\bps@setuplistings
+	\lstdefinelanguage{assembly}{
+		keywords={LOAD,STORE,ADD,SUB,MUL,DIV,INC,SKIP,BR,BLT,BGT,BLEQ,BGEQ,
+			BEQ,BNEQ,READ,WRITE,HALT},
+		firstnumber=-3,
+		numberstyle={\color{gray}\ttfamily\addtocounter{lstnumber}{3}x +\ },
+		morecomment=[l]{;},
+	}
 	\lstnewenvironment{assembly}[1][]
-		{\lstset{
-			keywords={LOAD,STORE,ADD,SUB,MUL,DIV,INC,SKIP,BR,BLT,BGT,BLEQ,BGEQ,
-				BEQ,BNEQ,READ,WRITE,HALT},
-			firstnumber=-3,
-			numberstyle={\color{gray}\ttfamily\addtocounter{lstnumber}{3}x +\ },
-			morecomment=[l]{;},
-			#1
-		}}{}
+		{\lstset{language=assembly, #1}}{}
 \fi
 
 \ifbps@gantt
@@ -247,6 +249,12 @@
 
 \let\bps@setuplistings\relax
 
+% tables
+\ifbps@tabu
+	\ProvideExpandableDocumentCommand{\Th}{O{l} m}
+		{\multicolumn{1}{#1}{\Bf{#2}}}
+\fi
+
 \newcommand{\solutionstyle}{\color{blue}}
 \ifbps@solution
 	\newenvironment{solution}
@@ -280,32 +288,25 @@
 \fi
 
 \ifbps@maketitle
-	\newcommand{\maketitlepage}{\thispagestyle{empty}%
-		\vspace*{2in}%
-		\begin{center}%
-		\Large\begin{tabular}{r|l}
-		\@ifundefined{problemset@assignment}{}{assignment & \problemset@assignment \\}
-		by & \@author \\
-		\@ifundefined{problemset@course}{}{course & \problemset@course \\}
-		\@ifundefined{problemset@instructor}{}{instructor & \problemset@instructor \\}
-		\@ifundefined{problemset@duedate}{}{due & \problemset@duedate \\}
-		\end{tabular}%
-		\end{center}%
-		\pagebreak}
+	\NewDocumentCommand{\bps@titlerow}{o m}{\@ifundefined{bps@#2}{}%
+		{\IfValueTF{#1}{#1}{#2} & \csname bps@#2\endcsname \\}}
 
 	\renewcommand{\maketitle}{\thispagestyle{empty}%
-		%\vspace*{2in}%
 		\begin{center}%
-		\large\begin{tabular}{r|l}
-		\@ifundefined{problemset@assignment}{}{assignment & \problemset@assignment \\}
-		by & \@author \\
-		\@ifundefined{problemset@course}{}{course & \problemset@course \\}
-		\@ifundefined{problemset@instructor}{}{instructor & \problemset@instructor \\}
-		\@ifundefined{problemset@duedate}{}{due & \problemset@duedate \\}
+			\Large\begin{tabular}{r|l}
+			\bps@titlerow{assignment}%
+			by & \@author \\
+			\bps@titlerow{course}%
+			\bps@titlerow{instructor}%
+			\bps@titlerow[due]{duedate}%
 		\end{tabular}%
 		\end{center}%
-		\vspace*{2em}%
-		}
+		\vspace*{2em}}
+
+	\newcommand{\maketitlepage}{\thispagestyle{empty}%
+		\vspace*{2in}%
+		\maketitle
+		\pagebreak}
 \fi
 
 \ifbps@header
@@ -314,14 +315,24 @@
 	\fancyhf{}
 	\lhead{\@author
 		\hfill
-		\@ifundefined{problemset@assignment}{}{\problemset@assignment}%
-		\@ifundefined{problemset@duedate}{}{\ (due \problemset@duedate)}\hfill
-		\@ifundefined{problemset@instructor}{}{\problemset@instructor}%
+		\@ifundefined{bps@assignment}{}{\bps@assignment}%
+		\@ifundefined{bps@duedate}{}{\ (due \bps@duedate)}\hfill
+		\@ifundefined{bps@instructor}{}{\bps@instructor\hfill}%
 		\thepage}
 	\setlength{\headheight}{24pt}
 	\fancypagestyle{plain}{\fancyhead[L]{}}
 	\AtBeginDocument{\pagestyle{fancy}}
 \fi
+
+\let\ac\textsc
+
+\ProvideDocumentCommand{\newacronym}{o m}
+	{\IfValueTF{#1}%
+		{\def#1{\ac{#2}}}%
+		{\expandafter\def\csname #2\endcsname{\ac{#2}}}}
+
+\ProvideDocumentCommand{\newacronyms}{>{\SplitList{,}} m}
+	{\ProcessList{#1}{\newacronym}}
 
 % #1: env name
 % #2: pagebreak default
@@ -337,8 +348,14 @@
 			\vfill\pagebreak
 		\fi}%
 	\define@boolkey{#1}{pagebreak}[true]{\csname bps@#1pagebreak\endcsname}%
+	\expandafter\def\csname bps@#1@tocstar\endcsname{%
+		\csname ifKV@#1@toc\endcsname
+		\else
+			*%
+		\fi}%
+	\define@boolkey{#1}{toc}[true]{}%
 	\define@cmdkeys{#1}{number, label}%
-	\presetkeys{#1}{pagebreak=#2}{}%
+	\presetkeys{#1}{pagebreak=#2, toc}{}%
 }
 
 \newcounter{problemnumber}
@@ -362,7 +379,7 @@
 	\@ifundefined{cmdKV@#1@number}{%
 		\stepcounter{#1number}%
 	}{%
-		\expandafter\let\csname bps#1@number\expandafter\endcsname
+		\expandafter\let\csname bps@#1@number\expandafter\endcsname
 			\csname cmdKV@#1@number\endcsname
 	}%
 	% define labels for \ref and the like
@@ -372,6 +389,11 @@
 	% no spaces or numbers before the \section command
 	\renewcommand{\@seccntformat}[1]{}%
 	\typeout{\@currentlabelname}
+	\csname ifKV@#1@toc\endcsname
+		\def\bps@problem@section{#3}%
+	\else
+		\def\bps@problem@section{#3*}%
+	\fi
 	% make the section (#3 is \section or something)
 	% NOTE: If you use \@currentlabelname for the title, the document
 	% will pause on compilation on this line; I don't know why this is,
@@ -379,7 +401,7 @@
 	% hyperref redefines \@currentlabelname to do something weird and
 	% possibly-recursive with \@currentlabel). Either way, defining an
 	% alternate command for the title works here.
-	#3{\bps@problem@title@}%
+	\bps@problem@section{\bps@problem@title@}%
 	% fix up ref commands
 	\@ifundefined{cmdKV@#1@label}{}{%
 		\expandafter\label{\csname cmdKV@#1@label\endcsname}%
