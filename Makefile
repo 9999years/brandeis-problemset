@@ -1,5 +1,5 @@
 PACKAGE := brandeis-problemset
-DIST_FILES := ${PACKAGE}.cls ${PACKAGE}.tex ${PACKAGE}.pdf \
+DIST_FILES := ${PACKAGE}.cls ${PACKAGE}.sty ${PACKAGE}.tex ${PACKAGE}.pdf \
 	example.tex example.pdf LICENSE.txt README.md
 
 # Simple OS detection for Make on Cygwin...
@@ -37,6 +37,7 @@ tidy:
 	# copied files
 	rm -rf ${PACKAGE}
 
+distclean: clean
 clean:
 	$(LATEXMK) -C
 	make tidy

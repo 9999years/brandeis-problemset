@@ -1,4 +1,4 @@
-\ProvidesClass{brandeis-problemset}[2019/03/06 0.5.0 COSI problem sets at
+\ProvidesClass{brandeis-problemset}[2019/03/09 0.5.1 COSI problem sets at
 	Brandeis University]
 \NeedsTeXFormat{LaTeX2e}
 % Description: A document class for Brandeis University's computer science
