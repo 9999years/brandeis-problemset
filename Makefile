@@ -1,6 +1,8 @@
 PACKAGE := brandeis-problemset
-DIST_FILES := ${PACKAGE}.cls ${PACKAGE}.sty ${PACKAGE}.tex ${PACKAGE}.pdf \
-	example.tex example.pdf LICENSE.txt README.md
+DIST_FILES := ${PACKAGE}.cls ${PACKAGE}.sty
+DOC_FILES := ${PACKAGE}.tex ${PACKAGE}.pdf \
+	example.tex example.pdf \
+	LICENSE.txt README.md
 
 # Simple OS detection for Make on Cygwin...
 UNAME := $(shell uname -o)
@@ -19,19 +21,20 @@ ${PACKAGE}.pdf: ${PACKAGE}.tex
 example.pdf: example.tex
 	$(LATEXMK) $?
 
-${PACKAGE}: $(DIST_FILES)
+${PACKAGE}: $(DIST_FILES) $(DOC_FILES)
 	mkdir -p ${PACKAGE}
-	cp -t ${PACKAGE} $?
+	cp -t ${PACKAGE} $^
 	chmod -x,+r ${PACKAGE}/*
 
+.PHONY: dist
+dist: ${PACKAGE}.tar.gz
 ${PACKAGE}.tar.gz: ${PACKAGE}
 	tar -czf $@ $?
+	make tidy
 	tar -tvf $@
 
-dist: ${PACKAGE}.tar.gz
-
 tidy:
-	# all generated files but the pdf
+	# all generated files but the pdf and .tar.gz
 	$(LATEXMK) -c
 	rm -rf extra
 	# copied files
