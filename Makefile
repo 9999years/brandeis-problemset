@@ -1,12 +1,13 @@
-VERSION := 2019/03/11 0.5.2
+VERSION := 2019\/03\/11 0.5.2
 PACKAGE := brandeis-problemset
 
+ROOT_DIR := $(CURDIR)
 DIST_FILES := ${PACKAGE}.cls ${PACKAGE}.sty
 DOC_FILES := ${PACKAGE}.tex \
-	example.tex example.pdf \
+	example.tex \
 	LICENSE.txt README.md
 NEEDS_ESCAPE := ${PACKAGE}.cls ${PACKAGE}.sty ${PACKAGE}.tex
-ESCAPE_VERSION := sed -e "s/\${VERSION}/${VERSION}/"
+ESCAPE_VERSION := sed -e "s/\$${VERSION}/${VERSION}/" -i
 
 # Simple OS detection for Make on Cygwin...
 UNAME := $(shell uname -o)
@@ -17,24 +18,25 @@ endif
 
 TEXMF_ROOT := ${HOME}/texmf
 INSTALL_DIR := $(TEXMF_ROOT)/tex/latex/${PACKAGE}
-LATEXMK := latexmk -aux-directory=extra -pdf -r ./.latexmkrc -pvc- -pv-
+LATEXMK := latexmk -aux-directory=extra -pdf -r $(ROOT_DIR)/.latexmkrc -pvc- -pv-
 
 ${PACKAGE}/${PACKAGE}.pdf: ${PACKAGE}/${PACKAGE}.tex
+	cd ${PACKAGE} && $(LATEXMK) ${PACKAGE}.tex
+
+example.pdf: example.tex
 	$(LATEXMK) $?
 
-${PACKAGE}/example.pdf: ${PACKAGE}/example.tex
-	$(LATEXMK) $?
-
-${PACKAGE}: $(DIST_FILES) $(DOC_FILES)
+${PACKAGE}: $(DIST_FILES) $(DOC_FILES) example.pdf
 	mkdir -p $(PACKAGE)
 	cp -t ${PACKAGE} $^
-	$(ESCAPE_VERSION) $(NEEDS_ESCAPE)
+	cd ${PACKAGE} && $(ESCAPE_VERSION) $(NEEDS_ESCAPE)
 	make ${PACKAGE}/${PACKAGE}.pdf
 	chmod -x,+r ${PACKAGE}/*
 
 .PHONY: dist
 dist: ${PACKAGE}.tar.gz
 ${PACKAGE}.tar.gz: ${PACKAGE}
+	cd ${PACKAGE} && $(LATEXMK) -c && rm -rf extra
 	tar -czf $@ $?
 	make tidy
 	tar -tvf $@
