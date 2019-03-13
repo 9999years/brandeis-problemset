@@ -64,6 +64,6 @@ clean:
 	make tidy
 	rm -f ${PACKAGE}.tar.gz
 
-install: ${PACKAGE}
+install: dir-no-pdf
 	install -d ${INSTALL_DIR}
-	install $(DIST_FILES) ${INSTALL_DIR}
+	cd ${PACKAGE} && install $(DIST_FILES) ${INSTALL_DIR}
