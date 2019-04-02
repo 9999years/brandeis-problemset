@@ -1,4 +1,4 @@
-VERSION := 2019\/03\/13 0.5.2
+VERSION := 2019\/03\/30 0.5.3
 PACKAGE := brandeis-problemset
 
 ROOT_DIR := $(CURDIR)

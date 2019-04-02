@@ -339,10 +339,11 @@
 \newcommand{\bps@problemkeys}[2]{%
 	\expandafter\newlength\csname bps@#1indent\endcsname
 	\expandafter\setlength\csname bps@#1indent\endcsname{1in}%
-	\expandafter\def\csname bps@#1@title\endcsname{}%
+	\expandafter\def\csname bps@#1@title\endcsname{%
+		\@ifundefined{cmdKV@#1@title}%
+			{}%
+			{: \csname cmdKV@#1@title\endcsname}}%
 	\expandafter\def\csname bps@#1@number\endcsname{\arabic{#1number}}%
-	\define@key{#1}{title}{%
-		\expandafter\renewcommand{\csname bps@#1@title\endcsname}{: #1}}%
 	\expandafter\def\csname bps@#1pagebreak\endcsname{%
 		\csname ifKV@#1@pagebreak\endcsname
 			\vfill\pagebreak
@@ -354,7 +355,7 @@
 			*%
 		\fi}%
 	\define@boolkey{#1}{toc}[true]{}%
-	\define@cmdkeys{#1}{number, label}%
+	\define@cmdkeys{#1}{number, label, title}%
 	\presetkeys{#1}{pagebreak=#2, toc}{}%
 }
 
@@ -379,13 +380,15 @@
 	\@ifundefined{cmdKV@#1@number}{%
 		\stepcounter{#1number}%
 	}{%
-		\expandafter\let\csname bps@#1@number\expandafter\endcsname
-			\csname cmdKV@#1@number\endcsname
+		\expandafter\def\csname bps@#1@number\endcsname
+			{\expandafter\noexpand\csname cmdKV@#1@number\endcsname}%
 	}%
 	% define labels for \ref and the like
-	\edef\@currentlabel{#2}%
-	\edef\bps@problem@title@{Problem \@currentlabel\csname bps@#1@title\endcsname}
-	\edef\@currentlabelname{\bps@problem@title@}%
+	\def\@currentlabel{#2}%
+	\edef\bps@problem@title@{Problem
+		\@currentlabel% the problem number
+		\expandafter\noexpand\csname bps@#1@title\endcsname}
+	\def\@currentlabelname{\bps@problem@title@}%
 	% no spaces or numbers before the \section command
 	\renewcommand{\@seccntformat}[1]{}%
 	\typeout{\@currentlabelname}
