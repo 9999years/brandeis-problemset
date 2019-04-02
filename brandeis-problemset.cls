@@ -175,7 +175,7 @@
 \let\Tt\texttt
 
 \renewcommand{\labelitemi}{---}
-\setlist[1]{
+\setlist[itemize,enumerate,1]{
 	leftmargin=0em,
 }
 \setlist{
