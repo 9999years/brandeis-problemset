@@ -59,6 +59,7 @@
 
 \bps@comploption{antonella}
 \bps@comploption{math}
+\bps@comploption[true]{fonts}
 
 \DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessKeyvalOptions*
@@ -96,8 +97,20 @@
 	bmargin=1.5in,
 ]{geometry}
 
+% math
+\ifbps@math
+	% see note below
+	\RequirePackage{mathtools}
+
+	% for whatever reason, redefining this before the \begin{document}
+	% has no effect
+	\AtBeginDocument{\renewcommand{\Re}{\mathbb{R}}}
+\fi
+
 % fonts
 % NOTE: The order these packages are loaded in is very important.
+% - mathtools has to be loaded before these or overbrackets and such get
+%   messed up
 % - unicode-math overwrites a bunch of commands, so should be loaded after
 %   amsmath and others
 % - amsmath should be loaded after stix2 (not sure why, but the stix2
@@ -142,15 +155,6 @@
 		\RequirePackage[upint]{stix2}
 		\RequirePackage{amsmath}[2013/01/14]
 	\fi
-\fi
-
-% math
-\ifbps@math
-	\RequirePackage{mathtools}
-
-	% for whatever reason, redefining this before the \begin{document}
-	% has no effect
-	\AtBeginDocument{\renewcommand{\Re}{\mathbb{R}}}
 \fi
 
 \ifbps@antonella

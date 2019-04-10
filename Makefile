@@ -1,4 +1,4 @@
-VERSION := 2019\/04\/02 0.5.4
+VERSION := 2019\/04\/15 0.5.5
 PACKAGE := brandeis-problemset
 
 ROOT_DIR := $(CURDIR)
@@ -37,6 +37,7 @@ dir-no-pdf: $(DIST_FILES) $(DOC_FILES)
 	cp -t ${PACKAGE} $^
 	cd ${PACKAGE} && $(ESCAPE_VERSION) $(NEEDS_ESCAPE)
 
+dir: dir-pdf
 dir-pdf: dir-no-pdf ${PACKAGE}/example.tex ${PACKAGE}/${PACKAGE}.tex
 	cd ${PACKAGE} && $(LATEXMK) $(NEEDS_LATEXMK)
 
@@ -67,3 +68,13 @@ clean:
 install: dir-no-pdf
 	install -d ${INSTALL_DIR}
 	cd ${PACKAGE} && install $(DIST_FILES) ${INSTALL_DIR}
+
+.PHONY:                            help
+help:
+	@echo "dist:               Make distribution '.tar.gz'"
+	@echo "tidy:               Clean generated files except '.pdf's and '.tar.gz's"
+	@echo "clean / distclean:  Clean all generated files"
+	@echo "install:            install style and class files to \$$INSTALL_DIR"
+	@echo "                        ${INSTALL_DIR}"
+	@echo "dir-no-pdf:         The directory which is '.tar.gz'd without necessary '.pdf's"
+	@echo "dir-pdf:            The directory which is '.tar.gz'd with '.pdf's"

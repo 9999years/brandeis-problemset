@@ -67,7 +67,6 @@ automatically enabled.}
 \begin{document}
 \maketitle
 \begin{abstract}
-
 	Brandeis University's computer science (``\textsc{cosi}'') courses
 	often assign ``problem sets'' which require fairly rigorous
 	formatting. The \ctan{brandeis-problemset} document class, which
@@ -76,7 +75,6 @@ automatically enabled.}
 
 	Although \bps\ is compatible with all \LaTeX\ flavors, \fontspecok\
 	is recommended for \ctan{fontspec} support.
-
 \end{abstract}
 
 \begin{note}
@@ -730,7 +728,7 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 	\pid{1}{10}
 \end{ganttschedule}
 \end{document}
-\end{latexcode}
+\end{latexcode}%stopzone
 
 \begin{changelog}[author=Rebecca Turner]
 \begin{version}[v=Coming soon\dots]
@@ -739,15 +737,19 @@ $\Rm{Foo}(a, n)$ computes $a^n$, and will run in $O(n)$ time always.
 	context-free grammars.
 \end{version}
 
+\shortversion{v=0.5.5, date=2019-04-10, changes={Reordered package loading
+	to prevent \ctan{mathtools} from breaking \cs{overbrace} and \cs{underbrace}
+	commands.}}
+
 \shortversion{v=0.5.4, date=2019-04-02, changes={Fixed hanging indent in
 	\texttt{description}-lists; the hanging indent was accidentally
 	removed through a tweak to hang the list item markers for the
 	\texttt{itemize} and \texttt{enumerate} lists.}}
 
-\shortversion{v=0.5.3, date=2019-03-30, changes={Commands such as |\texttt|
-	won't automatically cause errors when used in the optional arguments
-	of the |problem| and |subproblem| environments. More complex
-	commands may still cause issues, however.}}
+\shortversion{v=0.5.3, date=2019-03-30, changes={Commands such as
+	\cs{texttt} won't automatically cause errors when used in the optional
+	arguments of the \texttt{problem} and \texttt{subproblem} environments.
+	More complex commands may still cause issues, however.}}
 
 \shortversion{v=0.5.2, date=2019-03-13, changes={Scheme code highlighting
 	erroneously highlighted \texttt{c\textbf{b}r},
